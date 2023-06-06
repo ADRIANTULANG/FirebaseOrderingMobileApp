@@ -38,6 +38,8 @@ class AddressController extends GetxController {
             "contact": element['contact'],
             "name": element['name'],
             "set": element['set'],
+            "location": element['l'],
+            "geopointid": element['g']
           };
           data.add(elementData);
         });
@@ -77,29 +79,6 @@ class AddressController extends GetxController {
       Get.find<PlaceOrderScreenController>().address_name.value = name;
       Get.find<PlaceOrderScreenController>().address_full.value = address;
       Get.back();
-    }
-  }
-
-  add_Address(
-      {required String name,
-      required String contact,
-      required String full_Address}) async {
-    try {
-      var userDocumentReference = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(Get.find<StorageServices>().storage.read("id"));
-      await FirebaseFirestore.instance.collection("address").add({
-        "address": full_Address,
-        "contact": contact,
-        "name": name,
-        "set": false,
-        "user": userDocumentReference
-      });
-
-      getAddress();
-      Get.back();
-    } on Exception catch (e) {
-      print(e.toString());
     }
   }
 }

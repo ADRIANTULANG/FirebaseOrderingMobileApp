@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:orderingapp/services/location_services.dart';
 import 'package:orderingapp/services/notification_services.dart';
 import 'package:sizer/sizer.dart';
 
@@ -13,6 +14,7 @@ void main() async {
   await Firebase.initializeApp();
   await Get.put(StorageServices());
   await Get.put(NotificationServices());
+  await Get.put(LocationServices());
   runApp(const MyApp());
 }
 

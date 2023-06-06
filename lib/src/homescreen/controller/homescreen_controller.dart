@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 
@@ -42,16 +43,25 @@ class HomeScreenController extends GetxController {
   getStores() async {
     List data = [];
     try {
-      await storesReference.get().then((querySnapshot) {
-        querySnapshot.docs.forEach((element) {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      GeoFirestore geoFirestore = GeoFirestore(firestore.collection('store'));
+      final curreny_location_static_for_now =
+          GeoPoint(8.243594931980976, 124.2532414740163);
+
+      List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
+          curreny_location_static_for_now, 0.6);
+      documents.forEach((document) {
+        if (document.data() != null) {
           Map elementData = {
-            "image": element['image'],
-            "name": element['name'],
-            "address": element['address'],
-            "id": element.id,
+            "image": document.get('image'),
+            "name": document.get('name'),
+            "address": document.get('address'),
+            "id": document.id,
+            "geopointid": document.get('g'),
+            "location": document.get('l'),
           };
           data.add(elementData);
-        });
+        }
       });
       var encodedData = jsonEncode(data);
       storeList.assignAll(await storeModelFromJson(encodedData));
@@ -63,19 +73,27 @@ class HomeScreenController extends GetxController {
   getStoresPopular() async {
     List data = [];
     try {
-      await storesReference
-          .where("popular", isEqualTo: true)
-          .get()
-          .then((querySnapshot) {
-        querySnapshot.docs.forEach((element) {
-          Map elementData = {
-            "image": element['image'],
-            "name": element['name'],
-            "address": element['address'],
-            "id": element.id,
-          };
-          data.add(elementData);
-        });
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      GeoFirestore geoFirestore = GeoFirestore(firestore.collection('store'));
+      final curreny_location_static_for_now =
+          GeoPoint(8.243594931980976, 124.2532414740163);
+
+      List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
+          curreny_location_static_for_now, 0.6);
+      documents.forEach((document) {
+        if (document.data() != null) {
+          if (document.get("popular") == true) {
+            Map elementData = {
+              "image": document.get('image'),
+              "name": document.get('name'),
+              "address": document.get('address'),
+              "id": document.id,
+              "geopointid": document.get('g'),
+              "location": document.get('l'),
+            };
+            data.add(elementData);
+          }
+        }
       });
       var encodedData = jsonEncode(data);
       storeListPopular.assignAll(await storeModelFromJson(encodedData));

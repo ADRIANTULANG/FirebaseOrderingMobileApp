@@ -16,6 +16,8 @@ class UserAddress {
   String contact;
   String name;
   bool set;
+  String geopointid;
+  List<double> location;
 
   UserAddress({
     required this.id,
@@ -23,6 +25,8 @@ class UserAddress {
     required this.address,
     required this.contact,
     required this.name,
+    required this.geopointid,
+    required this.location,
   });
 
   factory UserAddress.fromJson(Map<String, dynamic> json) => UserAddress(
@@ -31,6 +35,8 @@ class UserAddress {
         contact: json["contact"],
         name: json["name"],
         set: json["set"],
+        geopointid: json["geopointid"],
+        location: List<double>.from(json["location"].map((x) => x.toDouble())),
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,5 +45,7 @@ class UserAddress {
         "contact": contact,
         "name": name,
         "set": set,
+        "geopointid": geopointid,
+        "location": List<dynamic>.from(location.map((x) => x)),
       };
 }

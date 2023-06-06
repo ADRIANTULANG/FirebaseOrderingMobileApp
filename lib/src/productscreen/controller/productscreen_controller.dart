@@ -10,7 +10,8 @@ import '../../placeorder_screen/view/placeorderscreen_view.dart';
 import '../model/productscreen_model.dart';
 
 class ProductScreenController extends GetxController {
-  StoreModel store = StoreModel(address: "", image: "", name: "", id: "");
+  StoreModel store = StoreModel(
+      address: "", image: "", name: "", id: "", geopointid: "", location: []);
   RxBool isLoading = true.obs;
   final CollectionReference productsReference =
       FirebaseFirestore.instance.collection('products');

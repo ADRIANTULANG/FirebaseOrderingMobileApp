@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../registration_screen/view/registration_screen_view.dart';
 import '../controller/loginscreen_controller.dart';
 
