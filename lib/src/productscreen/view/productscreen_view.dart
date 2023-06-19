@@ -41,18 +41,23 @@ class ProductScreenView extends GetView<ProductScreenController> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.only(left: 1.w),
-                                    height: 10.h,
-                                    width: 10.w,
-                                    decoration: BoxDecoration(
-                                        color: Colors.amber,
-                                        shape: BoxShape.circle),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.arrow_back_ios,
-                                        size: 12.sp,
-                                        color: Colors.white,
+                                  InkWell(
+                                    onTap: () {
+                                      Get.back();
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: 1.w),
+                                      height: 10.h,
+                                      width: 10.w,
+                                      decoration: BoxDecoration(
+                                          color: Colors.amber,
+                                          shape: BoxShape.circle),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.arrow_back_ios,
+                                          size: 12.sp,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -152,12 +157,19 @@ class ProductScreenView extends GetView<ProductScreenController> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text(
-                                                  controller.productList[index]
-                                                      .productName,
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    fontWeight: FontWeight.bold,
+                                                Expanded(
+                                                  child: Container(
+                                                    child: Text(
+                                                      controller
+                                                          .productList[index]
+                                                          .productName,
+                                                      style: TextStyle(
+                                                          fontSize: 12.sp,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                    ),
                                                   ),
                                                 ),
                                                 Row(

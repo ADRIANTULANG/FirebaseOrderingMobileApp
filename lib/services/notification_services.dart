@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 import 'package:http/http.dart' as http;
+import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
 
 class NotificationServices extends GetxService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -71,6 +72,9 @@ class NotificationServices extends GetxService {
               notificationLayout: NotificationLayout.BigText,
             ),
           );
+          if (Get.isRegistered<HomeScreenController>()) {
+            Get.find<HomeScreenController>().getOrders();
+          }
           // }
 
           // call_unseen_messages();
@@ -148,6 +152,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         notificationLayout: NotificationLayout.BigText,
       ),
     );
+    if (Get.isRegistered<HomeScreenController>()) {
+      Get.find<HomeScreenController>().getOrders();
+    }
     // }
 
     // call_unseen_messages();

@@ -7,6 +7,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import '../../../services/getstorage_services.dart';
 import '../../address_screen/controller/address_controller.dart';
+import '../../placeorder_screen/controller/placeorderscreen_controller.dart';
 
 class GooglemapController extends GetxController {
   String name = '';
@@ -58,20 +59,32 @@ class GooglemapController extends GetxController {
 
   add_Address() async {
     try {
+      await setAlltofalse();
+      bool isSet = false;
       var userDocumentReference = await FirebaseFirestore.instance
           .collection('users')
           .doc(Get.find<StorageServices>().storage.read("id"));
+      if (Get.isRegistered<PlaceOrderScreenController>() == true) {
+        isSet = true;
+      }
       var newData = await FirebaseFirestore.instance.collection("address").add({
         "address": full_Address.value,
         "contact": contact,
         "name": name,
-        "set": false,
+        "set": isSet,
         "user": userDocumentReference
       });
       setGeoPoint(documentID: newData.id);
-      Get.find<AddressController>().getAddress();
-      Get.back();
-      Get.back();
+
+      if (Get.isRegistered<PlaceOrderScreenController>()) {
+        await Get.find<PlaceOrderScreenController>().getAddress();
+        Get.back();
+        Get.back();
+      } else {
+        Get.find<AddressController>().getAddress();
+        Get.back();
+        Get.back();
+      }
     } on Exception catch (e) {
       print(e.toString());
     }
@@ -83,5 +96,20 @@ class GooglemapController extends GetxController {
 
     await geoFirestore.setLocation(documentID,
         GeoPoint(tapped_location.latitude, tapped_location.longitude));
+  }
+
+  setAlltofalse() async {
+    var userDocumentReference = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(Get.find<StorageServices>().storage.read("id"));
+    final addressBatchRef = await FirebaseFirestore.instance
+        .collection('address')
+        .where("user", isEqualTo: userDocumentReference)
+        .get();
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    for (final address in addressBatchRef.docs) {
+      batch.update(address.reference, {'set': false});
+    }
+    await batch.commit();
   }
 }

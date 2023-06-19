@@ -74,11 +74,6 @@ class AddressAlertDialog {
               SizedBox(
                 height: 2.h,
               ),
-              Text(
-                "Full Address.",
-                style:
-                    TextStyle(fontWeight: FontWeight.normal, fontSize: 13.sp),
-              ),
               SizedBox(
                 height: 3.h,
               ),

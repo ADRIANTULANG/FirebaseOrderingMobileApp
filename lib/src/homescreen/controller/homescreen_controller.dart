@@ -139,7 +139,7 @@ class HomeScreenController extends GetxController {
       var encodedData = await jsonEncode(data);
       orderList.assignAll(await orderModelFromJson(encodedData));
     } catch (e) {
-      print(e.toString() + " eRROR");
+      print(e.toString() + " ERROR");
     }
   }
 }
