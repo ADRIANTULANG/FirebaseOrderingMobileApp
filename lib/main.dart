@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/services/location_services.dart';
 import 'package:orderingapp/services/notification_services.dart';
@@ -15,6 +16,9 @@ void main() async {
   await Get.put(StorageServices());
   await Get.put(NotificationServices());
   await Get.put(LocationServices());
+  Stripe.publishableKey =
+      'pk_test_51NKxUxB0VnpAUEkudXpcYtqy0jz9T4SzmZh6YC3lxRCual06BcfurVJC6CCKp9BompBCQOQ6gWTKcR1QxhCE2gx500u6k2l7f7';
+  await Stripe.instance.applySettings();
   runApp(const MyApp());
 }
 

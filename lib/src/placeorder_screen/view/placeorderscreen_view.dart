@@ -409,6 +409,51 @@ class PlaceOrderScreenView extends GetView<PlaceOrderScreenController> {
                 SizedBox(
                   height: 1.h,
                 ),
+                Container(
+                  padding: EdgeInsets.only(left: .5.w, right: 5.w),
+                  child: Row(
+                    children: [
+                      Obx(
+                        () => Checkbox(
+                            value: controller.cod.value,
+                            onChanged: (value) {
+                              if (controller.cod.value == true) {
+                                controller.cod.value = false;
+                                controller.onlinepayment.value = true;
+                              } else {
+                                controller.cod.value = true;
+                                controller.onlinepayment.value = false;
+                              }
+                            }),
+                      ),
+                      Text("Cash on Delivery")
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: .5.w, right: 5.w),
+                  child: Row(
+                    children: [
+                      Obx(
+                        () => Checkbox(
+                            value: controller.onlinepayment.value,
+                            onChanged: (value) {
+                              if (controller.onlinepayment.value == true) {
+                                controller.onlinepayment.value = false;
+                                controller.cod.value = true;
+                              } else {
+                                controller.onlinepayment.value = true;
+                                controller.cod.value = false;
+                              }
+                            }),
+                      ),
+                      Text("Pay Online")
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 2.h,
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 5.w, right: 5.w),
                   child: Row(
@@ -483,7 +528,13 @@ class PlaceOrderScreenView extends GetView<PlaceOrderScreenController> {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          controller.place_order();
+          if (controller.cod.value == true) {
+            controller.place_order();
+          } else {
+            controller.makePayment(
+                amount: controller.total_amount().value.toString(),
+                currency: "PHP");
+          }
         },
         child: Container(
           height: 8.h,

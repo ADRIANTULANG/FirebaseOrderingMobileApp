@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
 import 'package:orderingapp/src/productscreen/controller/productscreen_controller.dart';
 import 'package:orderingapp/src/search_screen/controller/search_screen_controller.dart';
-
+import 'package:http/http.dart' as http;
 import '../../homescreen/widget/homescreen_alertdialog.dart';
 import '../../productscreen/model/productscreen_model.dart';
 import '../model/placeorder_screen_address_model.dart';
@@ -19,6 +20,11 @@ class PlaceOrderScreenController extends GetxController {
   RxString address_contact = ''.obs;
   RxString address_full = ''.obs;
   RxString store_id = ''.obs;
+
+  Map<String, dynamic>? paymentIntentData;
+
+  RxBool cod = true.obs;
+  RxBool onlinepayment = false.obs;
 
   @override
   void onInit() async {
@@ -205,5 +211,78 @@ class PlaceOrderScreenController extends GetxController {
     } on Exception catch (e) {
       print(e);
     }
+  }
+
+  Future<void> makePayment(
+      {required String amount, required String currency}) async {
+    try {
+      // final paymentMethod =
+      //           await Stripe.instance.createPaymentMethod(PaymentMethodParams.card(
+      //             paymentMethodData: PaymentMethodData (billingDetails: BillingD)
+      //           ));
+      paymentIntentData = await createPaymentIntent(amount, currency);
+      if (paymentIntentData != null) {
+        print(amount);
+        print(currency);
+        await Stripe.instance.initPaymentSheet(
+            paymentSheetParameters: SetupPaymentSheetParameters(
+          // applePay: PaymentSheetApplePay(merchantCountryCode: currency),
+          googlePay: PaymentSheetGooglePay(
+              merchantCountryCode: "PH", currencyCode: "PHP", testEnv: true),
+
+          merchantDisplayName: 'Prospects',
+          customerId: Get.find<StorageServices>().storage.read('id'),
+          paymentIntentClientSecret: paymentIntentData!['client_secret'],
+          customerEphemeralKeySecret: paymentIntentData!['ephemeralKey'],
+        ));
+        print("here");
+
+        displayPaymentSheet();
+      }
+    } catch (e, s) {
+      print('exception:$e$s');
+    }
+  }
+
+  displayPaymentSheet() async {
+    try {
+      await Stripe.instance.presentPaymentSheet();
+      place_order();
+    } on Exception catch (e) {
+      if (e is StripeException) {
+        print("Error from Stripe: ${e.error.localizedMessage}");
+      } else {
+        print("Unforeseen error: ${e}");
+      }
+    } catch (e) {
+      print("exception:$e");
+    }
+  }
+
+  createPaymentIntent(String amount, String currency) async {
+    var amountString = double.parse(amount).toInt();
+    try {
+      Map<String, dynamic> body = {
+        'amount': calculateAmount(amountString.toString()),
+        'currency': currency,
+        'payment_method_types[]': 'card'
+      };
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization':
+                'Bearer sk_test_51NKxUxB0VnpAUEku9rr4DZql73G5G3hZQQjMY2vt6dIDaOZFgYGkvxmHASJXxAhuCzOhesfe06uYV293JgcQJJxw00gAuKDQkz',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
+      return jsonDecode(response.body);
+    } catch (err) {
+      print('err charging user: ${err.toString()}');
+    }
+  }
+
+  calculateAmount(String amount) {
+    final a = (int.parse(amount)) * 100;
+    return a.toString();
   }
 }
