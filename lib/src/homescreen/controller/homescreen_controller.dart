@@ -2,9 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
+import 'package:orderingapp/src/homescreen/widget/homescreen_home.dart';
+import 'package:orderingapp/src/homescreen/widget/homescreen_map.dart';
+import 'package:orderingapp/src/homescreen/widget/homescreen_orders.dart';
+import 'package:sizer/sizer.dart';
 
 import '../model/homescreen_model.dart';
 import '../model/homescreen_model_order.dart';
@@ -19,6 +25,13 @@ class HomeScreenController extends GetxController {
 
   RxInt cartCount = 0.obs;
   Timer? debounce;
+  RxInt pageindex = 0.obs;
+
+  final Completer<GoogleMapController> googleMapController = Completer();
+
+  GoogleMapController? camera_controller;
+
+  RxList<Marker> marker = <Marker>[].obs;
   @override
   void onInit() {
     getStores();
@@ -27,6 +40,12 @@ class HomeScreenController extends GetxController {
     getCartItemCount();
     super.onInit();
   }
+
+  List<Widget> screens = [
+    HomeScreenHome(),
+    HomeScreenMap(),
+    HomeScreenOrders()
+  ];
 
   @override
   void onClose() {
@@ -65,9 +84,48 @@ class HomeScreenController extends GetxController {
       });
       var encodedData = jsonEncode(data);
       storeList.assignAll(await storeModelFromJson(encodedData));
+      marker.clear();
+      for (var i = 0; i < storeList.length; i++) {
+        print("location $i: ${storeList[i].location}");
+        marker.add(Marker(
+            position:
+                LatLng(storeList[i].location[0], storeList[i].location[1]),
+            markerId: MarkerId(storeList[i].id.toString()),
+            infoWindow: InfoWindow(title: storeList[i].name)));
+      }
+      marker.add(Marker(
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          position: LatLng(8.244297997423898, 124.25594209192478),
+          markerId: MarkerId("My Location"),
+          infoWindow: InfoWindow(title: "My Location")));
     } on Exception catch (e) {
       print(e.toString());
     }
+  }
+
+  animateToStoreLocation({required LatLng latlng}) async {
+    var coordinate1 = LatLng(8.244297997423898, 124.25594209192478);
+    var coordinate2 = latlng;
+    double minLat = coordinate1.latitude < coordinate2.latitude
+        ? coordinate1.latitude
+        : coordinate2.latitude;
+    double maxLat = coordinate1.latitude > coordinate2.latitude
+        ? coordinate1.latitude
+        : coordinate2.latitude;
+    double minLng = coordinate1.longitude < coordinate2.longitude
+        ? coordinate1.longitude
+        : coordinate2.longitude;
+    double maxLng = coordinate1.longitude > coordinate2.longitude
+        ? coordinate1.longitude
+        : coordinate2.longitude;
+
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
+    await camera_controller!
+        .animateCamera(CameraUpdate.newLatLngBounds(bounds, 15.h));
   }
 
   getStoresPopular() async {
