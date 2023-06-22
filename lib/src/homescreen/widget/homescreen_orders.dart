@@ -29,7 +29,11 @@ class HomeScreenOrders extends GetView<HomeScreenController> {
                     "order_subtotal":
                         controller.orderList[index].orderSubtotal.toString(),
                     "order_total":
-                        controller.orderList[index].orderTotal.toString()
+                        controller.orderList[index].orderTotal.toString(),
+                    "order_status":
+                        controller.orderList[index].orderStatus.toString(),
+                    "store_id":
+                        controller.orderList[index].orderStoreId.toString(),
                   });
                 },
                 child: Container(

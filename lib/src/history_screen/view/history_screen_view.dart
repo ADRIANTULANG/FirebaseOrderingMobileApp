@@ -75,7 +75,13 @@ class HistoryScreenView extends GetView<HistoryScreenController> {
                                     .toString(),
                                 "order_total": controller
                                     .order_history_list[index].orderTotal
-                                    .toString()
+                                    .toString(),
+                                "order_status": controller
+                                    .order_history_list[index].orderStatus
+                                    .toString(),
+                                "store_id": controller
+                                    .order_history_list[index].orderStoreId
+                                    .toString(),
                               });
                             },
                             child: Container(

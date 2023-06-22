@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../chat_screen/view/chat_screen_view.dart';
 import '../controller/orderdetailscreen_controller.dart';
 
 class OrderDetailScreeView extends GetView<OrderDetailScreenController> {
@@ -45,7 +46,26 @@ class OrderDetailScreeView extends GetView<OrderDetailScreenController> {
                       style: TextStyle(
                           fontWeight: FontWeight.w700, fontSize: 13.sp),
                     ),
-                  ))
+                  )),
+                  Obx(
+                    () => controller.order_status.value == "Pending" ||
+                            controller.order_status.value == "Accepted" ||
+                            controller.order_status.value == "Checkout"
+                        ? InkWell(
+                            onTap: () {
+                              Get.to(() => ChatScreenView(), arguments: {
+                                "order_id": controller.order_id.value,
+                                "store_id": controller.store_id.value
+                              });
+                            },
+                            child: Icon(
+                              Icons.messenger,
+                              size: 15.sp,
+                              color: Colors.amber,
+                            ),
+                          )
+                        : SizedBox(),
+                  ),
                 ],
               ),
             ),

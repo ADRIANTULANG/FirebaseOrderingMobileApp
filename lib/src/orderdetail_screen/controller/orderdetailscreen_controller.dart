@@ -10,16 +10,18 @@ class OrderDetailScreenController extends GetxController {
   RxString order_Delivery_fee = ''.obs;
   RxString order_subtotal = ''.obs;
   RxString order_total = ''.obs;
+  RxString order_status = ''.obs;
+  RxString store_id = ''.obs;
   RxList<OrderDetailModel> orderDetails_list = <OrderDetailModel>[].obs;
   @override
   void onInit() async {
     order_id.value = await Get.arguments['order_id'];
     order_Delivery_fee.value = await Get.arguments['order_Delivery_fee'];
-
+    store_id.value = await Get.arguments['store_id'];
     order_subtotal.value = await Get.arguments['order_subtotal'];
 
     order_total.value = await Get.arguments['order_total'];
-
+    order_status.value = await Get.arguments['order_status'];
     getOrderDetails();
     super.onInit();
   }

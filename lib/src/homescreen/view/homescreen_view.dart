@@ -99,7 +99,17 @@ class HomeScreenView extends GetView<HomeScreenController> {
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.location_on_rounded), label: "Map"),
-              BottomNavigationBarItem(icon: Icon(Icons.list), label: "Orders"),
+              BottomNavigationBarItem(
+                  icon: Obx(
+                    () => controller.orderList.length > 0
+                        ? badges.Badge(
+                            badgeContent:
+                                Text(controller.orderList.length.toString()),
+                            child: Icon(Icons.list),
+                          )
+                        : Icon(Icons.list),
+                  ),
+                  label: "Orders"),
             ]),
       ),
     );
