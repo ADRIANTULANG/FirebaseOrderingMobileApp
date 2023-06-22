@@ -16,6 +16,7 @@ class ChatScreenController extends GetxController {
   StreamSubscription<dynamic>? listener;
 
   TextEditingController message = TextEditingController();
+  ScrollController scrollController = ScrollController();
   @override
   void onInit() async {
     order_id.value = await Get.arguments['order_id'];
@@ -64,6 +65,9 @@ class ChatScreenController extends GetxController {
         var encodedData = await jsonEncode(data);
         chatList.assignAll(await chatModelFromJson(encodedData));
         chatList.sort((a, b) => a.date.compareTo(b.date));
+        Future.delayed(Duration(seconds: 1), () {
+          scrollController.jumpTo(scrollController.position.maxScrollExtent);
+        });
       });
     } catch (e) {
       print(e.toString() + " eRROR");
@@ -87,6 +91,9 @@ class ChatScreenController extends GetxController {
         "store": storeDocumentReference
       });
       message.clear();
+      Future.delayed(Duration(seconds: 1), () {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      });
     } catch (e) {}
   }
 }

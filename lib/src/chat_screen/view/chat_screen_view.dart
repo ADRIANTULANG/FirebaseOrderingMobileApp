@@ -35,8 +35,8 @@ class ChatScreenView extends GetView<ChatScreenController> {
                     () => ListView.builder(
                       itemCount: controller.chatList.length,
                       shrinkWrap: true,
+                      controller: controller.scrollController,
                       padding: EdgeInsets.only(top: 10, bottom: 10),
-                      physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return Column(
                           children: [
