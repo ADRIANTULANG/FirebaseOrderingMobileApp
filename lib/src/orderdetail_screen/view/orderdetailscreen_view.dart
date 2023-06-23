@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:badges/badges.dart' as badge;
 import '../../chat_screen/view/chat_screen_view.dart';
 import '../controller/orderdetailscreen_controller.dart';
 
@@ -50,18 +50,31 @@ class OrderDetailScreeView extends GetView<OrderDetailScreenController> {
                   Obx(
                     () => controller.order_status.value == "Pending" ||
                             controller.order_status.value == "Accepted" ||
-                            controller.order_status.value == "Checkout"
+                            controller.order_status.value == "Checkout" ||
+                            controller.order_status.value == "Preparing"
                         ? InkWell(
                             onTap: () {
                               Get.to(() => ChatScreenView(), arguments: {
                                 "order_id": controller.order_id.value,
                                 "store_id": controller.store_id.value
                               });
+                              controller.hasMessage.value = false;
                             },
-                            child: Icon(
-                              Icons.messenger,
-                              size: 15.sp,
-                              color: Colors.amber,
+                            child: Obx(
+                              () => controller.hasMessage.value == true
+                                  ? badge.Badge(
+                                      badgeContent: Text("!"),
+                                      child: Icon(
+                                        Icons.messenger,
+                                        size: 15.sp,
+                                        color: Colors.amber,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.messenger,
+                                      size: 15.sp,
+                                      color: Colors.amber,
+                                    ),
                             ),
                           )
                         : SizedBox(),

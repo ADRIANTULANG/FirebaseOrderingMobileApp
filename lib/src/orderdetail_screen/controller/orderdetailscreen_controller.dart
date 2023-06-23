@@ -12,6 +12,7 @@ class OrderDetailScreenController extends GetxController {
   RxString order_total = ''.obs;
   RxString order_status = ''.obs;
   RxString store_id = ''.obs;
+  RxBool hasMessage = false.obs;
   RxList<OrderDetailModel> orderDetails_list = <OrderDetailModel>[].obs;
   @override
   void onInit() async {
@@ -22,6 +23,8 @@ class OrderDetailScreenController extends GetxController {
 
     order_total.value = await Get.arguments['order_total'];
     order_status.value = await Get.arguments['order_status'];
+    hasMessage.value = await Get.arguments['hasMessage'];
+
     getOrderDetails();
     super.onInit();
   }

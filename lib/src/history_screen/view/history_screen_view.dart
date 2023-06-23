@@ -82,7 +82,11 @@ class HistoryScreenView extends GetView<HistoryScreenController> {
                                 "store_id": controller
                                     .order_history_list[index].orderStoreId
                                     .toString(),
+                                "hasMessage": controller
+                                    .order_history_list[index].hasMessage.value,
                               });
+                              controller.order_history_list[index].hasMessage
+                                  .value = false;
                             },
                             child: Container(
                               height: 17.h,

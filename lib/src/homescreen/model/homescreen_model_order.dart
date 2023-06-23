@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:get/get.dart';
+
 List<OrderModel> orderModelFromJson(String str) =>
     List<OrderModel>.from(json.decode(str).map((x) => OrderModel.fromJson(x)));
 
@@ -20,6 +22,7 @@ class OrderModel {
   double orderTotal;
   StoreDetails storeDetails;
   int item_count_in_order;
+  RxBool hasMessage;
 
   OrderModel({
     required this.id,
@@ -31,6 +34,7 @@ class OrderModel {
     required this.orderTotal,
     required this.storeDetails,
     required this.item_count_in_order,
+    required this.hasMessage,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) => OrderModel(
@@ -42,6 +46,7 @@ class OrderModel {
         orderSubtotal: json["order_subtotal"],
         orderTotal: json["order_total"],
         item_count_in_order: json["item_count_in_order"],
+        hasMessage: false.obs,
         storeDetails: StoreDetails.fromJson(json["store_details"]),
       );
 
@@ -54,6 +59,7 @@ class OrderModel {
         "order_subtotal": orderSubtotal,
         "order_total": orderTotal,
         "item_count_in_order": item_count_in_order,
+        "hasMessage": hasMessage,
         "store_details": storeDetails.toJson(),
       };
 }

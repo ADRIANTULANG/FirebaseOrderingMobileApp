@@ -200,4 +200,12 @@ class HomeScreenController extends GetxController {
       print(e.toString() + " ERROR");
     }
   }
+
+  putMessageIdentifier({required String order_id}) async {
+    for (var i = 0; i < orderList.length; i++) {
+      if (order_id == orderList[i].id) {
+        orderList[i].hasMessage.value = true;
+      }
+    }
+  }
 }
