@@ -47,7 +47,8 @@ class OtpScreenController extends GetxController {
             "lastname": lastname.value,
             "password": password.value,
             "username": email.value,
-            "isNormalAccount": true
+            "isNormalAccount": true,
+            "online": true
           });
           Get.back();
           Get.back();

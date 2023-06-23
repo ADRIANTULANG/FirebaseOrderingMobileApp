@@ -89,7 +89,8 @@ class RegistrationScreenController extends GetxController {
             "username": userCredential.user!.email == null
                 ? ""
                 : userCredential.user?.email,
-            "isNormalAccount": false
+            "isNormalAccount": false,
+            "online": true
           });
           Get.back();
           LoginAlertDialog.showSuccessCreateAccount();

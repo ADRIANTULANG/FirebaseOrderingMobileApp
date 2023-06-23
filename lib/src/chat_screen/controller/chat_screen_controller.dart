@@ -19,6 +19,10 @@ class ChatScreenController extends GetxController {
   ScrollController scrollController = ScrollController();
   @override
   void onInit() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(Get.find<StorageServices>().storage.read("id"))
+        .update({"online": true});
     order_id.value = await Get.arguments['order_id'];
     store_id.value = await Get.arguments['store_id'];
     print(order_id.value);
@@ -29,7 +33,11 @@ class ChatScreenController extends GetxController {
   }
 
   @override
-  void onClose() {
+  void onClose() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(Get.find<StorageServices>().storage.read("id"))
+        .update({"online": false});
     listener!.cancel();
     super.onClose();
   }
