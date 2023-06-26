@@ -172,7 +172,8 @@ class PlaceOrderScreenController extends GetxController {
         "order_status": "Pending",
         "order_store_id": storeDocumentReference,
         "order_subtotal": subtotal_amount().value,
-        "order_total": total_amount().value
+        "order_total": total_amount().value,
+        "delivery_address": address_full.value
       });
       setGeoPoint(documentID: orderDocRef.id);
       for (var i = 0; i < orders.length; i++) {
