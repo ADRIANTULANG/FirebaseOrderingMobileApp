@@ -16,13 +16,15 @@ class AddressModel {
   String contact;
   String name;
   bool set;
+  List<double> latlng;
 
   AddressModel({
-    required this.set,
     required this.id,
     required this.address,
     required this.contact,
     required this.name,
+    required this.set,
+    required this.latlng,
   });
 
   factory AddressModel.fromJson(Map<String, dynamic> json) => AddressModel(
@@ -31,6 +33,7 @@ class AddressModel {
         contact: json["contact"],
         name: json["name"],
         set: json["set"],
+        latlng: List<double>.from(json["latlng"].map((x) => x.toDouble())),
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,5 +42,6 @@ class AddressModel {
         "contact": contact,
         "name": name,
         "set": set,
+        "latlng": List<dynamic>.from(latlng.map((x) => x)),
       };
 }

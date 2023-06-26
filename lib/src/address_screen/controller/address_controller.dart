@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:orderingapp/src/placeorder_screen/controller/placeorderscreen_controller.dart';
 
 import '../../../services/getstorage_services.dart';
@@ -55,6 +56,7 @@ class AddressController extends GetxController {
       {required String addressID,
       required String name,
       required String address,
+      required LatLng latlng,
       required String contact}) async {
     var userDocumentReference = await FirebaseFirestore.instance
         .collection('users')
@@ -78,6 +80,7 @@ class AddressController extends GetxController {
       Get.find<PlaceOrderScreenController>().address_contact.value = contact;
       Get.find<PlaceOrderScreenController>().address_name.value = name;
       Get.find<PlaceOrderScreenController>().address_full.value = address;
+      Get.find<PlaceOrderScreenController>().location = latlng;
       Get.back();
     }
   }

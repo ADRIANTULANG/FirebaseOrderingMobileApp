@@ -86,7 +86,6 @@ class HomeScreenController extends GetxController {
       storeList.assignAll(await storeModelFromJson(encodedData));
       marker.clear();
       for (var i = 0; i < storeList.length; i++) {
-        print("location $i: ${storeList[i].location}");
         marker.add(Marker(
             position:
                 LatLng(storeList[i].location[0], storeList[i].location[1]),

@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
 import 'package:orderingapp/src/productscreen/controller/productscreen_controller.dart';
@@ -20,6 +22,7 @@ class PlaceOrderScreenController extends GetxController {
   RxString address_contact = ''.obs;
   RxString address_full = ''.obs;
   RxString store_id = ''.obs;
+  LatLng location = LatLng(0.0, 0.0);
 
   Map<String, dynamic>? paymentIntentData;
 
@@ -58,6 +61,7 @@ class PlaceOrderScreenController extends GetxController {
             "contact": element['contact'],
             "name": element['name'],
             "set": element['set'],
+            'latlng': element["l"],
           };
           data.add(elementData);
         });
@@ -71,6 +75,8 @@ class PlaceOrderScreenController extends GetxController {
             address_name.value = customer_Address[i].name;
             address_contact.value = customer_Address[i].contact;
             address_full.value = customer_Address[i].address;
+            location = LatLng(
+                customer_Address[i].latlng[0], customer_Address[i].latlng[1]);
           }
         }
       }
@@ -168,7 +174,7 @@ class PlaceOrderScreenController extends GetxController {
         "order_subtotal": subtotal_amount().value,
         "order_total": total_amount().value
       });
-
+      setGeoPoint(documentID: orderDocRef.id);
       for (var i = 0; i < orders.length; i++) {
         if (orders[i].quantity.value > 0) {
           await FirebaseFirestore.instance.collection('order_products').add({
@@ -211,6 +217,14 @@ class PlaceOrderScreenController extends GetxController {
     } on Exception catch (e) {
       print(e);
     }
+  }
+
+  setGeoPoint({required String documentID}) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    GeoFirestore geoFirestore = GeoFirestore(firestore.collection('orders'));
+
+    await geoFirestore.setLocation(
+        documentID, GeoPoint(location.latitude, location.longitude));
   }
 
   Future<void> makePayment(

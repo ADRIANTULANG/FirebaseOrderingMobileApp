@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../controller/address_controller.dart';
@@ -64,6 +65,11 @@ class AddressView extends GetView<AddressController> {
                       child: InkWell(
                         onTap: () {
                           controller.set_Address(
+                              latlng: LatLng(
+                                  controller
+                                      .customer_Address[index].location[0],
+                                  controller
+                                      .customer_Address[index].location[1]),
                               name: controller.customer_Address[index].name,
                               contact:
                                   controller.customer_Address[index].contact,
