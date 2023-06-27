@@ -12,6 +12,7 @@ class OrderDetailScreenController extends GetxController {
   RxString order_total = ''.obs;
   RxString order_status = ''.obs;
   RxString store_id = ''.obs;
+  RxString driver_id = ''.obs;
   RxBool hasMessage = false.obs;
   RxList<OrderDetailModel> orderDetails_list = <OrderDetailModel>[].obs;
   @override
@@ -26,12 +27,29 @@ class OrderDetailScreenController extends GetxController {
     hasMessage.value = await Get.arguments['hasMessage'];
 
     getOrderDetails();
+
+    if (order_status.value == "On Delivery") {
+      getOrderStatus();
+    }
     super.onInit();
   }
 
   @override
   void onClose() {
     super.onClose();
+  }
+
+  getOrderStatus() async {
+    try {
+      var orderDetail = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order_id.value)
+          .get();
+      order_status.value = orderDetail.get('order_status');
+      driver_id.value = orderDetail.get('driver');
+    } on Exception catch (e) {
+      print(e);
+    }
   }
 
   getOrderDetails() async {

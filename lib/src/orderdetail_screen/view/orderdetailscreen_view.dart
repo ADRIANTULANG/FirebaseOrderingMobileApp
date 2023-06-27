@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:orderingapp/src/chatdriver_screen/view/chatdriver_view.dart';
 import 'package:sizer/sizer.dart';
 import 'package:badges/badges.dart' as badge;
 import '../../chat_screen/view/chat_screen_view.dart';
@@ -51,13 +52,26 @@ class OrderDetailScreeView extends GetView<OrderDetailScreenController> {
                     () => controller.order_status.value == "Pending" ||
                             controller.order_status.value == "Accepted" ||
                             controller.order_status.value == "Checkout" ||
+                            controller.order_status.value == "On Delivery" ||
                             controller.order_status.value == "Preparing"
                         ? InkWell(
                             onTap: () {
-                              Get.to(() => ChatScreenView(), arguments: {
-                                "order_id": controller.order_id.value,
-                                "store_id": controller.store_id.value
-                              });
+                              if (controller.order_status.value == "Pending" ||
+                                  controller.order_status.value == "Accepted" ||
+                                  controller.order_status.value == "Checkout" ||
+                                  controller.order_status.value ==
+                                      "Preparing") {
+                                Get.to(() => ChatScreenView(), arguments: {
+                                  "order_id": controller.order_id.value,
+                                  "store_id": controller.store_id.value
+                                });
+                              } else if (controller.order_status.value ==
+                                  "On Delivery") {
+                                Get.to(() => ChatDriverView(), arguments: {
+                                  "order_id": controller.order_id.value,
+                                  "driver_id": controller.driver_id.value
+                                });
+                              }
                               controller.hasMessage.value = false;
                             },
                             child: Obx(

@@ -168,8 +168,13 @@ class HomeScreenController extends GetxController {
       var ordersData = await FirebaseFirestore.instance
           .collection("orders")
           .where("customer_id", isEqualTo: userDocumentReference)
-          .where("order_status",
-              whereIn: ['Pending', 'Preparing', 'Accepted', 'Checkout']).get();
+          .where("order_status", whereIn: [
+        'Pending',
+        'Preparing',
+        'Accepted',
+        'Checkout',
+        'On Delivery'
+      ]).get();
       for (var i = 0; i < ordersData.docs.length; i++) {
         var storeData = await FirebaseFirestore.instance
             .collection("store")

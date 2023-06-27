@@ -76,6 +76,9 @@ class NotificationServices extends GetxService {
           if (Get.isRegistered<HomeScreenController>() == true &&
               message.data['notif_from'] == "Order Status") {
             Get.find<HomeScreenController>().getOrders();
+            if (Get.isRegistered<OrderDetailScreenController>() == true) {
+              Get.find<OrderDetailScreenController>().getOrderStatus();
+            }
           }
           if (Get.isRegistered<HomeScreenController>() == true &&
               message.data['notif_from'] == "Chat") {
@@ -165,6 +168,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     if (Get.isRegistered<HomeScreenController>() == true &&
         message.data['notif_from'] == "Order Status") {
       Get.find<HomeScreenController>().getOrders();
+      if (Get.isRegistered<OrderDetailScreenController>() == true) {
+        Get.find<OrderDetailScreenController>().getOrderStatus();
+      }
     }
     if (Get.isRegistered<HomeScreenController>() == true &&
         message.data['notif_from'] == "Chat") {

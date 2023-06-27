@@ -1,18 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../services/getstorage_services.dart';
-import '../model/chat_model.dart';
+import '../model/chatdriver_model.dart';
 
-class ChatScreenController extends GetxController {
+class ChatDriverController extends GetxController {
   RxString order_id = ''.obs;
-  RxString store_id = ''.obs;
+  RxString driver_id = ''.obs;
   Stream? streamChats;
-  RxList<ChatModel> chatList = <ChatModel>[].obs;
+  RxList<ChatDriverModel> chatList = <ChatDriverModel>[].obs;
   StreamSubscription<dynamic>? listener;
 
   TextEditingController message = TextEditingController();
@@ -24,9 +24,9 @@ class ChatScreenController extends GetxController {
         .doc(Get.find<StorageServices>().storage.read("id"))
         .update({"online": true});
     order_id.value = await Get.arguments['order_id'];
-    store_id.value = await Get.arguments['store_id'];
+    driver_id.value = await Get.arguments['driver_id'];
     print(order_id.value);
-    print(store_id.value);
+    print(driver_id.value);
     await listenToChanges();
     await getChat();
     super.onInit();
@@ -46,13 +46,13 @@ class ChatScreenController extends GetxController {
     var userDocumentReference = await FirebaseFirestore.instance
         .collection('users')
         .doc(Get.find<StorageServices>().storage.read("id"));
-    var storeDocumentReference = await FirebaseFirestore.instance
-        .collection('store')
-        .doc(store_id.value);
+    var driverDocumentReference = await FirebaseFirestore.instance
+        .collection('driver')
+        .doc(driver_id.value);
     streamChats = await FirebaseFirestore.instance
-        .collection("chat")
+        .collection("chattodriver")
         .where("customer", isEqualTo: userDocumentReference)
-        .where("store", isEqualTo: storeDocumentReference)
+        .where("driver", isEqualTo: driverDocumentReference)
         .where("orderid", isEqualTo: order_id.value.toString())
         .limit(100)
         .snapshots();
@@ -72,7 +72,7 @@ class ChatScreenController extends GetxController {
           data.add(elementData);
         }
         var encodedData = await jsonEncode(data);
-        chatList.assignAll(await chatModelFromJson(encodedData));
+        chatList.assignAll(await chatDriverModelFromJson(encodedData));
         chatList.sort((a, b) => a.date.compareTo(b.date));
         Future.delayed(Duration(seconds: 1), () {
           scrollController.jumpTo(scrollController.position.maxScrollExtent);
@@ -88,21 +88,51 @@ class ChatScreenController extends GetxController {
       var userDocumentReference = await FirebaseFirestore.instance
           .collection('users')
           .doc(Get.find<StorageServices>().storage.read("id"));
-      var storeDocumentReference = await FirebaseFirestore.instance
-          .collection('store')
-          .doc(store_id.value);
-      await FirebaseFirestore.instance.collection('chat').add({
+      var driverDocumentReference = await FirebaseFirestore.instance
+          .collection('driver')
+          .doc(driver_id.value);
+
+      var driverDetails = await driverDocumentReference.get();
+      await FirebaseFirestore.instance.collection('chattodriver').add({
         "customer": userDocumentReference,
         "date": Timestamp.now(),
         "message": chat,
         "orderid": order_id.value.toString(),
         "sender": "customer",
-        "store": storeDocumentReference
+        "driver": driverDocumentReference
       });
       message.clear();
+      if (driverDetails.get('online') == false) {
+        sendNotificationIfOffline(
+            chat: chat,
+            orderid: order_id.value.toString(),
+            fcmToken: driverDetails.get('fcmToken'));
+      }
       Future.delayed(Duration(seconds: 1), () {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       });
     } catch (e) {}
+  }
+
+  sendNotificationIfOffline(
+      {required String chat,
+      required String orderid,
+      required String fcmToken}) async {
+    var body = jsonEncode({
+      "to": "$fcmToken",
+      "notification": {
+        "body": chat,
+        "title": 'Driver',
+        "subtitle": "Tracking Order: $orderid",
+      },
+      "data": {"notif_from": "Chat", "value": "$orderid"},
+    });
+    await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: {
+          "Authorization":
+              "key=AAAAFXgQldg:APA91bH0blj9KQykFmRZ1Pjub61SPwFyaq-YjvtH1vTvsOeNQ6PTWCYm5S7pOZIuB5zuc7hrFFYsRbuxEB8vF9N5nQoW9fZckjy4bwwltxf4ATPeBDH4L4VlZ1yyVBHF3OKr3yVZ_Ioy",
+          "Content-Type": "application/json"
+        },
+        body: body);
   }
 }
