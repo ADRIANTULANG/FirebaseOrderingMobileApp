@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -61,6 +62,7 @@ class SearchScreenView extends GetView<SearchScreenController> {
                   controller.debounce =
                       Timer(const Duration(milliseconds: 1000), () {
                     if (value.isEmpty || value == "") {
+                      Get.back();
                     } else {
                       controller.search_in_screen(keyword: value);
                     }
@@ -107,18 +109,38 @@ class SearchScreenView extends GetView<SearchScreenController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  height: 17.h,
-                                  width: 100.w,
-                                  decoration: BoxDecoration(
+                                CachedNetworkImage(
+                                  imageUrl:
+                                      controller.searched_Store[index].image,
+                                  placeholder: (context, url) => Container(
+                                    height: 17.h,
+                                    width: 100.w,
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(9),
                                         topRight: Radius.circular(9),
                                       ),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(controller
-                                              .searched_Store[index].image))),
+                                    ),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    height: 17.h,
+                                    width: 100.w,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(9),
+                                          topRight: Radius.circular(9),
+                                        ),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(controller
+                                                .searched_Store[index].image))),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 ),
                                 SizedBox(
                                   height: 1.h,

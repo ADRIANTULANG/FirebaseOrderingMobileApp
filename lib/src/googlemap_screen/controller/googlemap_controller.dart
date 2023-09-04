@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import '../../../services/getstorage_services.dart';
+import '../../../services/location_services.dart';
 import '../../address_screen/controller/address_controller.dart';
 import '../../placeorder_screen/controller/placeorderscreen_controller.dart';
 
@@ -30,10 +31,11 @@ class GooglemapController extends GetxController {
   }
 
   CameraPosition initialLocation = CameraPosition(
-    target: LatLng(8.243772468505437, 124.25436690004767),
+    target: LatLng(Get.find<LocationServices>().locationData!.latitude!,
+        Get.find<LocationServices>().locationData!.longitude!),
     // target: LatLng(Get.find<LocationServices>().locationData!.latitude!,
     //     Get.find<LocationServices>().locationData!.longitude!),
-    zoom: 25.4746,
+    zoom: 17.4746,
   );
 
   tapMap(latlng) async {
@@ -78,13 +80,14 @@ class GooglemapController extends GetxController {
 
       if (Get.isRegistered<PlaceOrderScreenController>()) {
         await Get.find<PlaceOrderScreenController>().getAddress();
-        Get.back();
-        Get.back();
-      } else {
-        Get.find<AddressController>().getAddress();
-        Get.back();
-        Get.back();
-      }
+        if (Get.isRegistered<AddressController>() == true) {
+          await Get.find<AddressController>().getAddress();
+        }
+        Future.delayed(Duration(seconds: 2), () {
+          Get.back();
+          Get.back();
+        });
+      } else {}
     } on Exception catch (e) {
       print(e.toString());
     }

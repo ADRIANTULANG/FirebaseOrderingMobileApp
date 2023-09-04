@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -61,17 +62,34 @@ class HomeScreenMap extends GetView<HomeScreenController> {
                             border: Border.all()),
                         child: Row(
                           children: [
-                            Container(
-                              height: 17.h,
-                              width: 30.w,
-                              decoration: BoxDecoration(
+                            CachedNetworkImage(
+                              imageUrl: controller.storeList[index].image,
+                              placeholder: (context, url) => Container(
+                                height: 17.h,
+                                width: 30.w,
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(8),
                                       bottomLeft: Radius.circular(8)),
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          controller.storeList[index].image))),
+                                ),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                height: 17.h,
+                                width: 30.w,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        bottomLeft: Radius.circular(8)),
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: imageProvider)),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                             ),
                             SizedBox(
                               width: 1.w,

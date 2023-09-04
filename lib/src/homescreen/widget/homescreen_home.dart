@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
@@ -58,18 +59,37 @@ class HomeScreenHome extends GetView<HomeScreenController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                height: 17.h,
-                                width: 100.w,
-                                decoration: BoxDecoration(
+                              CachedNetworkImage(
+                                imageUrl:
+                                    controller.storeListPopular[index].image,
+                                placeholder: (context, url) => Container(
+                                  height: 17.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(9),
                                       topRight: Radius.circular(9),
                                     ),
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(controller
-                                            .storeListPopular[index].image))),
+                                  ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  height: 17.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(9),
+                                        topRight: Radius.circular(9),
+                                      ),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: imageProvider)),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
                               ),
                               SizedBox(
                                 height: 1.h,
@@ -149,18 +169,36 @@ class HomeScreenHome extends GetView<HomeScreenController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                height: 17.h,
-                                width: 100.w,
-                                decoration: BoxDecoration(
+                              CachedNetworkImage(
+                                imageUrl: controller.storeList[index].image,
+                                placeholder: (context, url) => Container(
+                                  height: 17.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(9),
                                       topRight: Radius.circular(9),
                                     ),
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(controller
-                                            .storeList[index].image))),
+                                  ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  height: 17.h,
+                                  width: 100.w,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(9),
+                                        topRight: Radius.circular(9),
+                                      ),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: imageProvider)),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
                               ),
                               SizedBox(
                                 height: 1.h,

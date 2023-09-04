@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -23,13 +24,24 @@ class ProductScreenView extends GetView<ProductScreenController> {
                     Stack(
                       alignment: AlignmentDirectional.topCenter,
                       children: [
-                        Container(
-                          height: 30.h,
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(controller.store.image))),
+                        CachedNetworkImage(
+                          imageUrl: controller.store.image,
+                          placeholder: (context, url) => Container(
+                            height: 30.h,
+                            width: 100.w,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          imageBuilder: (context, imageProvider) => Container(
+                            height: 30.h,
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.cover, image: imageProvider)),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
                         Positioned(
                             top: 3.h,
@@ -131,17 +143,35 @@ class ProductScreenView extends GetView<ProductScreenController> {
                                   width: 100.w,
                                   child: Row(
                                     children: [
-                                      Container(
-                                        height: 15.h,
-                                        width: 30.w,
-                                        decoration: BoxDecoration(
+                                      CachedNetworkImage(
+                                        imageUrl: controller
+                                            .productList[index].productImage,
+                                        placeholder: (context, url) =>
+                                            Container(
+                                          height: 15.h,
+                                          width: 30.w,
+                                          decoration: BoxDecoration(
                                             border:
                                                 Border.all(color: Colors.black),
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: NetworkImage(controller
-                                                    .productList[index]
-                                                    .productImage))),
+                                          ),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          height: 15.h,
+                                          width: 30.w,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: imageProvider)),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
                                       ),
                                       SizedBox(
                                         width: 3.w,

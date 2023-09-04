@@ -38,6 +38,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
           height: 5.h,
           width: 70.w,
           child: TextField(
+            controller: controller.searchController,
             onChanged: (value) {
               if (controller.debounce?.isActive ?? false)
                 controller.debounce!.cancel();
@@ -47,6 +48,7 @@ class HomeScreenView extends GetView<HomeScreenController> {
                 } else {
                   Get.to(() => SearchScreenView(),
                       arguments: {"keyword": value});
+                  controller.searchController.clear();
                 }
                 FocusScope.of(context).unfocus();
               });

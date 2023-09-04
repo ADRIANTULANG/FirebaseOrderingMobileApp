@@ -7,6 +7,7 @@ import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
+import 'package:orderingapp/services/location_services.dart';
 import 'package:orderingapp/src/homescreen/widget/homescreen_home.dart';
 import 'package:orderingapp/src/homescreen/widget/homescreen_map.dart';
 import 'package:orderingapp/src/homescreen/widget/homescreen_orders.dart';
@@ -22,6 +23,8 @@ class HomeScreenController extends GetxController {
   RxList<StoreModel> storeList = <StoreModel>[].obs;
   RxList<StoreModel> storeListPopular = <StoreModel>[].obs;
   RxList<OrderModel> orderList = <OrderModel>[].obs;
+
+  TextEditingController searchController = TextEditingController();
 
   RxInt cartCount = 0.obs;
   Timer? debounce;
@@ -64,8 +67,9 @@ class HomeScreenController extends GetxController {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       GeoFirestore geoFirestore = GeoFirestore(firestore.collection('store'));
-      final curreny_location_static_for_now =
-          GeoPoint(8.243594931980976, 124.2532414740163);
+      final curreny_location_static_for_now = GeoPoint(
+          Get.find<LocationServices>().locationData!.latitude!,
+          Get.find<LocationServices>().locationData!.longitude!);
 
       List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
           curreny_location_static_for_now, 0.6);
@@ -104,7 +108,9 @@ class HomeScreenController extends GetxController {
   }
 
   animateToStoreLocation({required LatLng latlng}) async {
-    var coordinate1 = LatLng(8.244297997423898, 124.25594209192478);
+    var coordinate1 = LatLng(
+        Get.find<LocationServices>().locationData!.latitude!,
+        Get.find<LocationServices>().locationData!.longitude!);
     var coordinate2 = latlng;
     double minLat = coordinate1.latitude < coordinate2.latitude
         ? coordinate1.latitude
@@ -132,8 +138,9 @@ class HomeScreenController extends GetxController {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       GeoFirestore geoFirestore = GeoFirestore(firestore.collection('store'));
-      final curreny_location_static_for_now =
-          GeoPoint(8.243594931980976, 124.2532414740163);
+      final curreny_location_static_for_now = GeoPoint(
+          Get.find<LocationServices>().locationData!.latitude!,
+          Get.find<LocationServices>().locationData!.longitude!);
 
       List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
           curreny_location_static_for_now, 0.6);

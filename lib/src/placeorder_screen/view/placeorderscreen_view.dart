@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/src/placeorder_screen/widget/placeorder_widget_alertdialog.dart';
@@ -202,15 +203,31 @@ class PlaceOrderScreenView extends GetView<PlaceOrderScreenController> {
                             width: 100.w,
                             child: Row(
                               children: [
-                                Container(
-                                  height: 15.h,
-                                  width: 30.w,
-                                  decoration: BoxDecoration(
+                                CachedNetworkImage(
+                                  imageUrl:
+                                      controller.orders[index].productImage,
+                                  placeholder: (context, url) => Container(
+                                    height: 15.h,
+                                    width: 30.w,
+                                    decoration: BoxDecoration(
                                       border: Border.all(color: Colors.black),
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(controller
-                                              .orders[index].productImage))),
+                                    ),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    height: 15.h,
+                                    width: 30.w,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: imageProvider)),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 ),
                                 SizedBox(
                                   width: 3.w,
