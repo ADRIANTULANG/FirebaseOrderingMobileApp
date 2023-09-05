@@ -8,9 +8,12 @@ import '../../homescreen/model/homescreen_model_order.dart';
 
 class HistoryScreenController extends GetxController {
   RxList<OrderModel> order_history_list = <OrderModel>[].obs;
+  RxBool isLoadingData = true.obs;
+
   @override
-  void onInit() {
-    getOrders();
+  void onInit() async {
+    await getOrders();
+    isLoadingData.value = false;
     super.onInit();
   }
 

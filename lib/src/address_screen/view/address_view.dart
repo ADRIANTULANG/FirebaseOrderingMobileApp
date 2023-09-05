@@ -14,141 +14,164 @@ class AddressView extends GetView<AddressController> {
     Get.put(AddressController());
     return Scaffold(
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 5.w, right: 5.w),
-              height: 6.h,
-              width: 100.w,
-              decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.black45))),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      size: 15.sp,
-                      color: Colors.amber,
-                    ),
+          child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 5.w, right: 5.w),
+            height: 6.h,
+            width: 100.w,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black45))),
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    size: 15.sp,
+                    color: Colors.amber,
                   ),
-                  SizedBox(
-                    width: 2.5.w,
+                ),
+                SizedBox(
+                  width: 2.5.w,
+                ),
+                Expanded(
+                    child: Container(
+                  child: Text(
+                    "Address",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp),
                   ),
-                  Expanded(
-                      child: Container(
-                    child: Text(
-                      "Address",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 13.sp),
-                    ),
-                  ))
-                ],
-              ),
+                ))
+              ],
             ),
-            SizedBox(
-              height: 2.h,
-            ),
-            Container(
-              child: Obx(
-                () => ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: controller.customer_Address.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding:
-                          EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
-                      child: InkWell(
-                        onTap: () {
-                          controller.set_Address(
-                              latlng: LatLng(
-                                  controller
-                                      .customer_Address[index].location[0],
-                                  controller
-                                      .customer_Address[index].location[1]),
-                              name: controller.customer_Address[index].name,
-                              contact:
-                                  controller.customer_Address[index].contact,
-                              address:
-                                  controller.customer_Address[index].address,
-                              addressID: controller.customer_Address[index].id);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.only(left: 2.w, right: 2.w),
-                          height: 16.h,
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1.5, color: Colors.black45)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    controller.customer_Address[index].name
-                                        .capitalizeFirst
-                                        .toString(),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 13.sp),
-                                  ),
-                                  Obx(
-                                    () => controller
-                                                .customer_Address[index].set ==
-                                            true
-                                        ? Icon(
-                                            Icons.check_box,
-                                            size: 15.sp,
-                                            color: Colors.amber,
-                                          )
-                                        : Icon(
-                                            Icons.check_box_outline_blank,
-                                            size: 15.sp,
-                                            color: Colors.amber,
-                                          ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: .5.h,
-                              ),
-                              Text(
-                                controller.customer_Address[index].contact,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 11.sp),
-                              ),
-                              SizedBox(
-                                height: 3.h,
-                              ),
-                              Text(
-                                controller.customer_Address[index].address,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 11.sp,
-                                    color: Colors.grey),
-                              ),
-                            ],
-                          ),
+          ),
+          SizedBox(
+            height: 2.h,
+          ),
+          Container(
+            child: Obx(
+              () => controller.customer_Address.length == 0 &&
+                      controller.isLoadingData.value == false
+                  ? Expanded(
+                      child: SizedBox(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 80.sp,
+                              color: Colors.amber[800],
+                            ),
+                            SizedBox(
+                              height: 1.h,
+                            ),
+                            Text(
+                              "You currently don't have any saved address.",
+                              style: TextStyle(fontSize: 11.sp),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
+                    ))
+                  : ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: controller.customer_Address.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              left: 5.w, right: 5.w, bottom: 2.h),
+                          child: InkWell(
+                            onTap: () {
+                              controller.set_Address(
+                                  latlng: LatLng(
+                                      controller
+                                          .customer_Address[index].location[0],
+                                      controller
+                                          .customer_Address[index].location[1]),
+                                  name: controller.customer_Address[index].name,
+                                  contact: controller
+                                      .customer_Address[index].contact,
+                                  address: controller
+                                      .customer_Address[index].address,
+                                  addressID:
+                                      controller.customer_Address[index].id);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                              height: 16.h,
+                              width: 100.w,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 1.5, color: Colors.black45)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 1.h,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        controller.customer_Address[index].name
+                                            .capitalizeFirst
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 13.sp),
+                                      ),
+                                      Obx(
+                                        () => controller.customer_Address[index]
+                                                    .set ==
+                                                true
+                                            ? Icon(
+                                                Icons.check_box,
+                                                size: 15.sp,
+                                                color: Colors.amber,
+                                              )
+                                            : Icon(
+                                                Icons.check_box_outline_blank,
+                                                size: 15.sp,
+                                                color: Colors.amber,
+                                              ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: .5.h,
+                                  ),
+                                  Text(
+                                    controller.customer_Address[index].contact,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 11.sp),
+                                  ),
+                                  SizedBox(
+                                    height: 3.h,
+                                  ),
+                                  Text(
+                                    controller.customer_Address[index].address,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 11.sp,
+                                        color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          )
+        ],
       )),
       bottomNavigationBar: InkWell(
         onTap: () {

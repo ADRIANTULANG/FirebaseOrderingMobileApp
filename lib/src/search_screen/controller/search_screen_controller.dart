@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import 'package:get/get.dart';
+import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
 
 import '../../../services/location_services.dart';
 import '../../homescreen/model/homescreen_model.dart';
@@ -13,6 +14,8 @@ class SearchScreenController extends GetxController {
   RxList<StoreModel> searched_Store = <StoreModel>[].obs;
   RxList<StoreModel> searched_Store_masterList = <StoreModel>[].obs;
   Timer? debounce;
+
+  RxDouble radius = Get.find<HomeScreenController>().setRadius;
 
   @override
   void onInit() async {
@@ -37,7 +40,7 @@ class SearchScreenController extends GetxController {
           Get.find<LocationServices>().locationData!.longitude!);
 
       List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
-          curreny_location_static_for_now, 0.6);
+          curreny_location_static_for_now, radius.value);
       documents.forEach((document) {
         if (document.data() != null) {
           Map elementData = {

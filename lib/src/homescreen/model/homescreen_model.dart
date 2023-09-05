@@ -12,7 +12,6 @@ String storeModelToJson(List<StoreModel> data) =>
 
 class StoreModel {
   String id;
-
   String image;
   String address;
   String name;

@@ -28,6 +28,7 @@ class LoginScreenController extends GetxController {
   login({required String username, required String password}) async {
     List data = [];
     Map userData = {};
+    LoginAlertDialog.showLoadingDialog();
     try {
       await userReference
           .where('username', isEqualTo: username)
@@ -59,10 +60,11 @@ class LoginScreenController extends GetxController {
           firstname: userData['firstname'],
           lastname: userData['lastname'],
         );
-        Get.to(() => HomeScreenView());
+        Get.offAll(() => HomeScreenView());
         Get.find<NotificationServices>().getToken();
         // storeList.assignAll(await storeModelFromJson(encodedData));
       } else {
+        Get.back();
         LoginAlertDialog.showAccountNotFound();
       }
     } on Exception catch (e) {
@@ -72,6 +74,7 @@ class LoginScreenController extends GetxController {
 
   googleSignin() async {
     try {
+      LoginAlertDialog.showLoadingDialog();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
@@ -122,7 +125,10 @@ class LoginScreenController extends GetxController {
                 firstname: userData['firstname'],
                 lastname: userData['lastname'],
               );
-              Get.to(() => HomeScreenView());
+              Get.offAll(() => HomeScreenView());
+            } else {
+              Get.back();
+              LoginAlertDialog.showAccountNotFound();
             }
           } on Exception catch (e) {
             print(e.toString());

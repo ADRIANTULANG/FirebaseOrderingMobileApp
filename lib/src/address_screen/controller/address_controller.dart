@@ -10,9 +10,11 @@ import '../model/address_model.dart';
 
 class AddressController extends GetxController {
   RxList<UserAddress> customer_Address = <UserAddress>[].obs;
+  RxBool isLoadingData = true.obs;
   @override
-  void onInit() {
-    getAddress();
+  void onInit() async {
+    await getAddress();
+    isLoadingData.value = false;
     super.onInit();
   }
 

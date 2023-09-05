@@ -13,8 +13,10 @@ import 'package:orderingapp/src/homescreen/widget/homescreen_map.dart';
 import 'package:orderingapp/src/homescreen/widget/homescreen_orders.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../productscreen/view/productscreen_view.dart';
 import '../model/homescreen_model.dart';
 import '../model/homescreen_model_order.dart';
+import '../model/homescreen_model_popular_products.dart';
 
 class HomeScreenController extends GetxController {
   final CollectionReference storesReference =
@@ -23,7 +25,7 @@ class HomeScreenController extends GetxController {
   RxList<StoreModel> storeList = <StoreModel>[].obs;
   RxList<StoreModel> storeListPopular = <StoreModel>[].obs;
   RxList<OrderModel> orderList = <OrderModel>[].obs;
-
+  RxList<PopularProducts> popularProductsList = <PopularProducts>[].obs;
   TextEditingController searchController = TextEditingController();
 
   RxInt cartCount = 0.obs;
@@ -36,11 +38,13 @@ class HomeScreenController extends GetxController {
 
   RxList<Marker> marker = <Marker>[].obs;
   @override
-  void onInit() {
+  void onInit() async {
+    await getRadius();
     getStores();
     getStoresPopular();
     getOrders();
     getCartItemCount();
+    getPopularProducts();
     super.onInit();
   }
 
@@ -55,6 +59,20 @@ class HomeScreenController extends GetxController {
     super.onClose();
   }
 
+  RxDouble setRadius = 0.0.obs;
+
+  getRadius() async {
+    var res = await FirebaseFirestore.instance
+        .collection('radius')
+        .where('isActive', isEqualTo: true)
+        .get();
+    var radius = res.docs;
+    for (var i = 0; i < radius.length; i++) {
+      setRadius.value = radius[i].get('radius');
+    }
+    print(setRadius.value);
+  }
+
   getCartItemCount() async {
     if (Get.find<StorageServices>().storage.read('cart') != null) {
       List cartList = Get.find<StorageServices>().storage.read('cart');
@@ -62,17 +80,34 @@ class HomeScreenController extends GetxController {
     }
   }
 
+  getPopularProducts() async {
+    var res = await FirebaseFirestore.instance
+        .collection('products')
+        .where('isPopular', isEqualTo: true)
+        .get();
+    var products = res.docs;
+    List data = [];
+    for (var product in products) {
+      Map map = product.data();
+      map['product_store_id'] = product.get('product_store_id').id;
+      map['product_id'] = product.id;
+      data.add(map);
+    }
+    popularProductsList
+        .assignAll(await popularProductsFromJson(await jsonEncode(data)));
+  }
+
   getStores() async {
     List data = [];
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       GeoFirestore geoFirestore = GeoFirestore(firestore.collection('store'));
-      final curreny_location_static_for_now = GeoPoint(
+      final curreny_location = GeoPoint(
           Get.find<LocationServices>().locationData!.latitude!,
           Get.find<LocationServices>().locationData!.longitude!);
 
-      List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
-          curreny_location_static_for_now, 0.6);
+      List<DocumentSnapshot> documents =
+          await geoFirestore.getAtLocation(curreny_location, setRadius.value);
       documents.forEach((document) {
         if (document.data() != null) {
           Map elementData = {
@@ -99,7 +134,8 @@ class HomeScreenController extends GetxController {
       marker.add(Marker(
           icon:
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-          position: LatLng(8.244297997423898, 124.25594209192478),
+          position: LatLng(Get.find<LocationServices>().locationData!.latitude!,
+              Get.find<LocationServices>().locationData!.longitude!),
           markerId: MarkerId("My Location"),
           infoWindow: InfoWindow(title: "My Location")));
     } on Exception catch (e) {
@@ -217,6 +253,29 @@ class HomeScreenController extends GetxController {
       if (order_id == orderList[i].id) {
         orderList[i].hasMessage.value = true;
       }
+    }
+  }
+
+  get_store_details_navigate_to_store_product_screen(
+      {required String storeID, required String product_id}) async {
+    print(storeID);
+    print(product_id);
+    var storeDetail =
+        await FirebaseFirestore.instance.collection('store').doc(storeID).get();
+    List<StoreModel> storeTempList = <StoreModel>[];
+    storeTempList.assignAll(await storeModelFromJson(jsonEncode([
+      {
+        "image": storeDetail.get('image'),
+        "name": storeDetail.get('name'),
+        "address": storeDetail.get('address'),
+        "id": storeDetail.id,
+        "geopointid": storeDetail.get('g'),
+        "location": storeDetail.get('l'),
+      }
+    ])));
+    if (storeTempList.isNotEmpty || storeTempList.length > 0) {
+      Get.to(() => ProductScreenView(),
+          arguments: {"store": storeTempList[0], "product_id": product_id});
     }
   }
 }

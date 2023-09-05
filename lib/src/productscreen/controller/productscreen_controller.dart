@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
-
 import '../../homescreen/model/homescreen_model.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import '../../placeorder_screen/view/placeorderscreen_view.dart';
 import '../model/productscreen_model.dart';
 
@@ -18,18 +18,35 @@ class ProductScreenController extends GetxController {
   RxList<ProductModel> productList = <ProductModel>[].obs;
   RxInt item_count = 0.obs;
   RxBool isShow = false.obs;
+  String? product_id;
+  AutoScrollController scrollController = AutoScrollController();
   @override
   void onInit() async {
     store = await Get.arguments['store'];
+    product_id = await Get.arguments['product_id'];
     await getProducts();
     isLoading(false);
     sync_products_to_cart();
+    if (product_id != null) {
+      jump_to_popular_products();
+    }
     super.onInit();
   }
 
   @override
   void onClose() {
     super.onClose();
+  }
+
+  jump_to_popular_products() async {
+    for (var i = 0; i < productList.length; i++) {
+      if (product_id == productList[i].productId) {
+        await Future.delayed(Duration(milliseconds: 500), () {
+          scrollController.scrollToIndex(i,
+              preferPosition: AutoScrollPosition.middle);
+        });
+      }
+    }
   }
 
   getProducts() async {
@@ -52,6 +69,7 @@ class ProductScreenController extends GetxController {
         });
       });
       var encodedData = await jsonEncode(data);
+
       productList.assignAll(await productModelFromJson(encodedData));
     } on Exception catch (e) {
       print(e.toString());

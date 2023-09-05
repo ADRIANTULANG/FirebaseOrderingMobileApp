@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:sizer/sizer.dart';
 import 'package:badges/badges.dart' as badges;
 import '../controller/productscreen_controller.dart';
@@ -73,26 +74,32 @@ class ProductScreenView extends GetView<ProductScreenController> {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    height: 10.h,
-                                    width: 10.w,
-                                    decoration: BoxDecoration(
-                                        color: Colors.amber,
-                                        shape: BoxShape.circle),
-                                    child: Center(
-                                      child: Obx(
-                                        () => badges.Badge(
-                                          badgeStyle: badges.BadgeStyle(
-                                              badgeColor: Colors.white),
-                                          position: badges.BadgePosition.topEnd(
-                                              top: -15, end: -12),
-                                          showBadge: controller.isShow.value,
-                                          badgeContent: Text(controller
-                                              .item_count.value
-                                              .toString()),
-                                          child: Icon(
-                                            Icons.storefront,
-                                            size: 13.sp,
+                                  InkWell(
+                                    onTap: () {
+                                      controller.navigate_to_place_order();
+                                    },
+                                    child: Container(
+                                      height: 10.h,
+                                      width: 10.w,
+                                      decoration: BoxDecoration(
+                                          color: Colors.amber,
+                                          shape: BoxShape.circle),
+                                      child: Center(
+                                        child: Obx(
+                                          () => badges.Badge(
+                                            badgeStyle: badges.BadgeStyle(
+                                                badgeColor: Colors.white),
+                                            position:
+                                                badges.BadgePosition.topEnd(
+                                                    top: -15, end: -12),
+                                            showBadge: controller.isShow.value,
+                                            badgeContent: Text(controller
+                                                .item_count.value
+                                                .toString()),
+                                            child: Icon(
+                                              Icons.storefront,
+                                              size: 13.sp,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -134,187 +141,205 @@ class ProductScreenView extends GetView<ProductScreenController> {
                         child: Obx(
                           () => ListView.builder(
                             itemCount: controller.productList.length,
+                            controller: controller.scrollController,
                             itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: 1.5.h, left: 5.w, right: 5.w),
-                                child: Container(
-                                  height: 15.h,
-                                  width: 100.w,
-                                  child: Row(
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl: controller
-                                            .productList[index].productImage,
-                                        placeholder: (context, url) =>
-                                            Container(
-                                          height: 15.h,
-                                          width: 30.w,
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.black),
-                                          ),
-                                          child: Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        ),
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
-                                          height: 15.h,
-                                          width: 30.w,
-                                          decoration: BoxDecoration(
+                              return AutoScrollTag(
+                                index: index,
+                                controller: controller.scrollController,
+                                key: ValueKey(index),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: 1.5.h, left: 5.w, right: 5.w),
+                                  child: Container(
+                                    height: 15.h,
+                                    width: 100.w,
+                                    child: Row(
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl: controller
+                                              .productList[index].productImage,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            height: 15.h,
+                                            width: 30.w,
+                                            decoration: BoxDecoration(
                                               border: Border.all(
                                                   color: Colors.black),
-                                              image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image: imageProvider)),
+                                            ),
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            height: 15.h,
+                                            width: 30.w,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.black),
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: imageProvider)),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
                                         ),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                      ),
-                                      SizedBox(
-                                        width: 3.w,
-                                      ),
-                                      Expanded(
-                                          child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Text(
-                                                      controller
-                                                          .productList[index]
-                                                          .productName,
-                                                      style: TextStyle(
-                                                          fontSize: 12.sp,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          overflow: TextOverflow
-                                                              .ellipsis),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () {
+                                        SizedBox(
+                                          width: 3.w,
+                                        ),
+                                        Expanded(
+                                            child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      child: Text(
                                                         controller
-                                                            .increment_quantity(
-                                                                id: controller
-                                                                    .productList[
-                                                                        index]
-                                                                    .productId);
-                                                      },
-                                                      child: Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 1.5.w,
-                                                                  right: 1.5.w,
-                                                                  top: .5.h,
-                                                                  bottom: .5.h),
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  color: Colors
-                                                                      .black),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          child: Icon(
-                                                            Icons.add,
-                                                            color: Colors.amber,
-                                                            size: 12.sp,
-                                                          )),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 2.w,
-                                                    ),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 2.w,
-                                                          right: 2.w,
-                                                          top: .5.h,
-                                                          bottom: .5.h),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.amber,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5)),
-                                                      child: Obx(
-                                                        () => Text(
-                                                          controller
-                                                              .productList[
-                                                                  index]
-                                                              .quantity
-                                                              .value
-                                                              .toString(),
-                                                          style: TextStyle(
+                                                            .productList[index]
+                                                            .productName,
+                                                        style: TextStyle(
                                                             fontSize: 12.sp,
                                                             fontWeight:
                                                                 FontWeight.bold,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          controller
+                                                              .increment_quantity(
+                                                                  id: controller
+                                                                      .productList[
+                                                                          index]
+                                                                      .productId);
+                                                        },
+                                                        child: Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 1.5.w,
+                                                                    right:
+                                                                        1.5.w,
+                                                                    top: .5.h,
+                                                                    bottom:
+                                                                        .5.h),
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .black),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            child: Icon(
+                                                              Icons.add,
+                                                              color:
+                                                                  Colors.amber,
+                                                              size: 12.sp,
+                                                            )),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 2.w,
+                                                      ),
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 2.w,
+                                                                right: 2.w,
+                                                                top: .5.h,
+                                                                bottom: .5.h),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.amber,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        child: Obx(
+                                                          () => Text(
+                                                            controller
+                                                                .productList[
+                                                                    index]
+                                                                .quantity
+                                                                .value
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                              fontSize: 12.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 2.w,
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        controller
-                                                            .decrement_quantity(
-                                                                id: controller
-                                                                    .productList[
-                                                                        index]
-                                                                    .productId);
-                                                      },
-                                                      child: Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 1.5.w,
-                                                                  right: 1.5.w,
-                                                                  top: .5.h,
-                                                                  bottom: .5.h),
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  color: Colors
-                                                                      .black),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          child: Icon(
-                                                            Icons.remove,
-                                                            color: Colors.amber,
-                                                            size: 12.sp,
-                                                          )),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                            Text(
-                                              "₱ " +
-                                                  controller.productList[index]
-                                                      .productPrice
-                                                      .toString(),
-                                              style: TextStyle(
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.normal,
+                                                      SizedBox(
+                                                        width: 2.w,
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          controller
+                                                              .decrement_quantity(
+                                                                  id: controller
+                                                                      .productList[
+                                                                          index]
+                                                                      .productId);
+                                                        },
+                                                        child: Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 1.5.w,
+                                                                    right:
+                                                                        1.5.w,
+                                                                    top: .5.h,
+                                                                    bottom:
+                                                                        .5.h),
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .black),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            child: Icon(
+                                                              Icons.remove,
+                                                              color:
+                                                                  Colors.amber,
+                                                              size: 12.sp,
+                                                            )),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                                    ],
+                                              Text(
+                                                "₱ " +
+                                                    controller
+                                                        .productList[index]
+                                                        .productPrice
+                                                        .toString(),
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ))
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

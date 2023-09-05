@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
+import 'package:orderingapp/src/homescreen/controller/homescreen_controller.dart';
 
 import '../model/cart_screen_model.dart';
 import '../widget/cart_screen_alertdialog.dart';
@@ -62,6 +63,9 @@ class CartScreenController extends GetxController {
       cartList.add(dataMap);
     }
     Get.find<StorageServices>().save_to_cart(cartList: cartList);
-    CartScreenAlertDialog.showSuccessSavingCart();
+    await CartScreenAlertDialog.showSuccessSavingCart();
+    if (Get.isRegistered<HomeScreenController>()) {
+      Get.find<HomeScreenController>().getCartItemCount();
+    }
   }
 }
