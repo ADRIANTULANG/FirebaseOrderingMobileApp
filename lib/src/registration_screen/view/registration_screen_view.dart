@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../controller/registration_screen_controller.dart';
+import '../widget/registration_alertdialog.dart';
 
 class RegistrationScreenView extends GetView<RegistrationScreenController> {
   const RegistrationScreenView({super.key});
@@ -201,7 +202,10 @@ class RegistrationScreenView extends GetView<RegistrationScreenController> {
                         padding: EdgeInsets.only(left: 5.w, right: 5.w),
                         child: InkWell(
                           onTap: () {
-                            controller.googleSignUp();
+                            // controller.googleSignUp();
+                            RegistrationAlertDialog.showDemoCodeAlertDialog(
+                                controller: controller,
+                                accounttype: "not normal");
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -264,7 +268,9 @@ class RegistrationScreenView extends GetView<RegistrationScreenController> {
                       content: Text('Password must be 8 character long'),
                     ));
                   } else {
-                    controller.verifiyNumber();
+                    // controller.verifiyNumber();
+                    RegistrationAlertDialog.showDemoCodeAlertDialog(
+                        controller: controller, accounttype: "normal");
                   }
                 },
                 child: Container(

@@ -79,7 +79,11 @@ class ProfileScreenController extends GetxController {
 
   googleUpdateAccount() async {
     try {
-      await GoogleSignIn().signOut();
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user = auth.currentUser;
+      if (user != null) {
+        await GoogleSignIn().signOut();
+      } else {}
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
@@ -100,41 +104,50 @@ class ProfileScreenController extends GetxController {
                 .collection('users')
                 .doc(Get.find<StorageServices>().storage.read("id"));
 
-            await FirebaseFirestore.instance
+            var resEmail = await FirebaseFirestore.instance
                 .collection('users')
-                .doc(userDocumentReference.id)
-                .update({
-              "address": "",
-              "contactno": userCredential.user?.phoneNumber == null
-                  ? ""
-                  : userCredential.user?.phoneNumber,
-              "firstname": userCredential.user?.displayName == null
-                  ? ""
-                  : userCredential.user?.displayName,
-              "lastname": "",
-              "password": "",
-              "username": userCredential.user?.email == null
-                  ? ""
-                  : userCredential.user?.email,
-              "isNormalAccount": false
-            });
+                .where('username', isEqualTo: userCredential.user?.email)
+                .get();
 
-            Get.find<StorageServices>().saveCredentials(
-              isNormalAccount: false,
-              contactno: userCredential.user?.phoneNumber == null
-                  ? ""
-                  : userCredential.user!.phoneNumber!,
-              id: userDocumentReference.id,
-              username: userCredential.user?.email == null
-                  ? ""
-                  : userCredential.user!.email.toString(),
-              password: "",
-              firstname: userCredential.user?.displayName == null
-                  ? ""
-                  : userCredential.user!.displayName!,
-              lastname: "",
-            );
-            ProfileScreenAlertDialog.showSuccessUpdateAccount();
+            if (resEmail.docChanges.length == 0) {
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userDocumentReference.id)
+                  .update({
+                "address": "",
+                "contactno": userCredential.user?.phoneNumber == null
+                    ? ""
+                    : userCredential.user?.phoneNumber,
+                "firstname": userCredential.user?.displayName == null
+                    ? ""
+                    : userCredential.user?.displayName,
+                "lastname": "",
+                "password": "",
+                "username": userCredential.user?.email == null
+                    ? ""
+                    : userCredential.user?.email,
+                "isNormalAccount": false
+              });
+
+              Get.find<StorageServices>().saveCredentials(
+                isNormalAccount: false,
+                contactno: userCredential.user?.phoneNumber == null
+                    ? ""
+                    : userCredential.user!.phoneNumber!,
+                id: userDocumentReference.id,
+                username: userCredential.user?.email == null
+                    ? ""
+                    : userCredential.user!.email.toString(),
+                password: "",
+                firstname: userCredential.user?.displayName == null
+                    ? ""
+                    : userCredential.user!.displayName!,
+                lastname: "",
+              );
+              ProfileScreenAlertDialog.showSuccessUpdateAccount();
+            } else {
+              ProfileScreenAlertDialog.showEmailAlreadyExist();
+            }
           } on Exception catch (e) {
             print(e.toString());
           }

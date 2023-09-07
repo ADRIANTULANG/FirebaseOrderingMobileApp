@@ -22,9 +22,9 @@ class SplashScreenController extends GetxController {
   navigate_to_homescreen() async {
     Timer(Duration(seconds: 3), () {
       if (Get.find<StorageServices>().storage.read('id') == null) {
-        Get.to(() => LoginScreenView());
+        Get.offAll(() => LoginScreenView());
       } else {
-        Get.to(() => HomeScreenView());
+        Get.offAll(() => HomeScreenView());
         Get.find<NotificationServices>().getToken();
       }
     });

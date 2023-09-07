@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 import 'package:orderingapp/services/notification_services.dart';
 import 'package:orderingapp/src/homescreen/view/homescreen_view.dart';
-
 import '../widget/login_screen_alertdialog.dart';
 
 class LoginScreenController extends GetxController {
@@ -129,12 +128,19 @@ class LoginScreenController extends GetxController {
             } else {
               Get.back();
               LoginAlertDialog.showAccountNotFound();
+              FirebaseAuth auth = FirebaseAuth.instance;
+              User? user = auth.currentUser;
+              if (user != null) {
+                await GoogleSignIn().signOut();
+              } else {}
             }
           } on Exception catch (e) {
             print(e.toString());
           }
         } else {}
       } else {
+        Get.back();
+
         print("null ang access token ug idtoken");
       }
     } catch (e) {

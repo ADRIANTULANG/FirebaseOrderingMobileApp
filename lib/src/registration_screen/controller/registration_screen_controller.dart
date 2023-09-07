@@ -28,6 +28,28 @@ class RegistrationScreenController extends GetxController {
     super.onClose();
   }
 
+  check_if_demo_code_exist(
+      {required String demoCode, required String accounttype}) async {
+    var resDemo = await FirebaseFirestore.instance
+        .collection('democode')
+        .where('code', isEqualTo: demoCode)
+        .where('isActive', isEqualTo: true)
+        .get();
+    Get.back();
+    if (resDemo.docs.length > 0) {
+      await FirebaseFirestore.instance
+          .collection('democode')
+          .doc(resDemo.docs[0].id)
+          .update({"isActive": false});
+      if (accounttype == "normal") {
+        verifiyNumber();
+      } else {
+        print("Dre age");
+        googleSignUp();
+      }
+    }
+  }
+
   verifiyNumber() async {
     isVerifyingNumber(true);
     await auth.verifyPhoneNumber(

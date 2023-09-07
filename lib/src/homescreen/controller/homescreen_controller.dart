@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geo_firestore_flutter/geo_firestore_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:orderingapp/services/getstorage_services.dart';
 import 'package:orderingapp/services/location_services.dart';
 import 'package:orderingapp/src/homescreen/widget/homescreen_home.dart';
@@ -13,10 +15,12 @@ import 'package:orderingapp/src/homescreen/widget/homescreen_map.dart';
 import 'package:orderingapp/src/homescreen/widget/homescreen_orders.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../loginscreen/view/loginscreen_view.dart';
 import '../../productscreen/view/productscreen_view.dart';
 import '../model/homescreen_model.dart';
 import '../model/homescreen_model_order.dart';
 import '../model/homescreen_model_popular_products.dart';
+import '../widget/homescreen_alertdialog.dart';
 
 class HomeScreenController extends GetxController {
   final CollectionReference storesReference =
@@ -276,6 +280,24 @@ class HomeScreenController extends GetxController {
     if (storeTempList.isNotEmpty || storeTempList.length > 0) {
       Get.to(() => ProductScreenView(),
           arguments: {"store": storeTempList[0], "product_id": product_id});
+    }
+  }
+
+  logout() async {
+    Get.find<StorageServices>().removeStorageCredentials();
+    Get.offAll(() => LoginScreenView());
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    if (user != null) {
+      await GoogleSignIn().signOut();
+    } else {}
+  }
+
+  on_will_pop_navigation({required HomeScreenController controller}) async {
+    if (pageindex.value == 0) {
+      HomeScreenAlertDialog.showLogoutConfirmation(controller: controller);
+    } else {
+      pageindex.value = pageindex.value - 1;
     }
   }
 }
