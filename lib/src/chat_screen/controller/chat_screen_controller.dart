@@ -55,6 +55,7 @@ class ChatScreenController extends GetxController {
         .where("store", isEqualTo: storeDocumentReference)
         .where("orderid", isEqualTo: order_id.value.toString())
         .limit(100)
+        .orderBy('date')
         .snapshots();
   }
 
