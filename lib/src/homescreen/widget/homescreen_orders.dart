@@ -14,102 +14,131 @@ class HomeScreenOrders extends GetView<HomeScreenController> {
       height: 100.h,
       width: 100.w,
       child: Obx(
-        () => ListView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: controller.orderList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: EdgeInsets.only(left: 3.w, top: 1.h, bottom: 1.h),
-              child: InkWell(
-                onTap: () {
-                  Get.to(() => OrderDetailScreeView(), arguments: {
-                    "order_id": controller.orderList[index].id,
-                    "order_Delivery_fee":
-                        controller.orderList[index].deliveryFee.toString(),
-                    "order_subtotal":
-                        controller.orderList[index].orderSubtotal.toString(),
-                    "order_total":
-                        controller.orderList[index].orderTotal.toString(),
-                    "order_status":
-                        controller.orderList[index].orderStatus.toString(),
-                    "store_id":
-                        controller.orderList[index].orderStoreId.toString(),
-                    "hasMessage": controller.orderList[index].hasMessage.value,
-                  });
-                  controller.orderList[index].hasMessage.value = false;
-                },
-                child: Obx(
-                  () => Container(
-                    padding: EdgeInsets.only(left: 2.w, top: 1.5.h, right: 2.w),
-                    height: 8.h,
-                    width: 65.w,
-                    decoration: BoxDecoration(
-                        color:
-                            controller.orderList[index].hasMessage.value == true
-                                ? Colors.orange
-                                : Colors.white,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Order - ${controller.orderList[index].orderStatus.capitalizeFirst.toString()}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 11.sp),
-                            ),
-                            Text(
-                              "₱ " +
-                                  controller.orderList[index].orderTotal
-                                      .toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.amber[900],
-                                  fontSize: 11.sp),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.store,
-                                  size: 15.sp,
-                                  color: Colors.amber,
-                                ),
-                                SizedBox(
-                                  width: 1.w,
-                                ),
-                                Text(
-                                  controller.orderList[index].storeDetails.name,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 11.sp),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              controller.orderList[index].item_count_in_order
-                                      .toString() +
-                                  " Item/s",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 11.sp),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+        () => controller.orderList.length == 0
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    size: 80.sp,
+                    color: Colors.amber[800],
                   ),
-                ),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  Text(
+                    "No active orders",
+                    style: TextStyle(fontSize: 12.sp),
+                  )
+                ],
+              )
+            : ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: controller.orderList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: 3.w, top: 1.h, bottom: 1.h),
+                    child: InkWell(
+                      onTap: () {
+                        Get.to(() => OrderDetailScreeView(), arguments: {
+                          "order_id": controller.orderList[index].id,
+                          "order_Delivery_fee": controller
+                              .orderList[index].deliveryFee
+                              .toString(),
+                          "order_subtotal": controller
+                              .orderList[index].orderSubtotal
+                              .toString(),
+                          "order_total":
+                              controller.orderList[index].orderTotal.toString(),
+                          "order_status": controller
+                              .orderList[index].orderStatus
+                              .toString(),
+                          "store_id": controller.orderList[index].orderStoreId
+                              .toString(),
+                          "hasMessage":
+                              controller.orderList[index].hasMessage.value,
+                        });
+                        controller.orderList[index].hasMessage.value = false;
+                      },
+                      child: Obx(
+                        () => Container(
+                          padding: EdgeInsets.only(
+                              left: 2.w, top: 1.5.h, right: 2.w),
+                          height: 8.h,
+                          width: 65.w,
+                          decoration: BoxDecoration(
+                              color: controller
+                                          .orderList[index].hasMessage.value ==
+                                      true
+                                  ? Colors.orange
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Order - ${controller.orderList[index].orderStatus.capitalizeFirst.toString()}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 11.sp),
+                                  ),
+                                  Text(
+                                    "₱ " +
+                                        controller.orderList[index].orderTotal
+                                            .toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.amber[900],
+                                        fontSize: 11.sp),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.store,
+                                        size: 15.sp,
+                                        color: Colors.amber,
+                                      ),
+                                      SizedBox(
+                                        width: 1.w,
+                                      ),
+                                      Text(
+                                        controller
+                                            .orderList[index].storeDetails.name,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 11.sp),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    controller.orderList[index]
+                                            .item_count_in_order
+                                            .toString() +
+                                        " Item/s",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 11.sp),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }

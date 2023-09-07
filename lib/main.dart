@@ -13,11 +13,11 @@ import 'src/splashscreen/view/splashscreen_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Get.put(LocationServices());
   await Firebase.initializeApp();
   await Get.put(StorageServices());
   await Get.put(NotificationServices());
-  await Get.put(LocationServices());
+
   Stripe.publishableKey =
       'pk_test_51NKxUxB0VnpAUEkudXpcYtqy0jz9T4SzmZh6YC3lxRCual06BcfurVJC6CCKp9BompBCQOQ6gWTKcR1QxhCE2gx500u6k2l7f7';
   await Stripe.instance.applySettings();

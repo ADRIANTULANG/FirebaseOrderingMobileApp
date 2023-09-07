@@ -112,19 +112,29 @@ class HomeScreenController extends GetxController {
 
       List<DocumentSnapshot> documents =
           await geoFirestore.getAtLocation(curreny_location, setRadius.value);
-      documents.forEach((document) {
-        if (document.data() != null) {
-          Map elementData = {
-            "image": document.get('image'),
-            "name": document.get('name'),
-            "address": document.get('address'),
-            "id": document.id,
-            "geopointid": document.get('g'),
-            "location": document.get('l'),
-          };
-          data.add(elementData);
+      for (var i = 0; i < documents.length; i++) {
+        var query = await FirebaseFirestore.instance
+            .collection('store')
+            .doc(documents[i].id)
+            .collection('rate')
+            .get();
+        List rateList = [];
+        for (var x = 0; x < query.docs.length; x++) {
+          Map rateListMap = query.docs[x].data();
+          rateListMap['id'] = query.docs[x].id;
+          rateList.add(rateListMap);
         }
-      });
+        Map elementData = {
+          "image": documents[i].get('image'),
+          "name": documents[i].get('name'),
+          "address": documents[i].get('address'),
+          "id": documents[i].id,
+          "geopointid": documents[i].get('g'),
+          "location": documents[i].get('l'),
+          "rate": rateList,
+        };
+        data.add(elementData);
+      }
       var encodedData = jsonEncode(data);
       storeList.assignAll(await storeModelFromJson(encodedData));
       marker.clear();
@@ -184,21 +194,31 @@ class HomeScreenController extends GetxController {
 
       List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
           curreny_location_static_for_now, 0.6);
-      documents.forEach((document) {
-        if (document.data() != null) {
-          if (document.get("popular") == true) {
-            Map elementData = {
-              "image": document.get('image'),
-              "name": document.get('name'),
-              "address": document.get('address'),
-              "id": document.id,
-              "geopointid": document.get('g'),
-              "location": document.get('l'),
-            };
-            data.add(elementData);
+      for (var i = 0; i < documents.length; i++) {
+        if (documents[i].get("popular") == true) {
+          var query = await FirebaseFirestore.instance
+              .collection('store')
+              .doc(documents[i].id)
+              .collection('rate')
+              .get();
+          List rateList = [];
+          for (var x = 0; x < query.docs.length; x++) {
+            Map rateListMap = query.docs[x].data();
+            rateListMap['id'] = query.docs[x].id;
+            rateList.add(rateListMap);
           }
+          Map elementData = {
+            "image": documents[i].get('image'),
+            "name": documents[i].get('name'),
+            "address": documents[i].get('address'),
+            "id": documents[i].id,
+            "geopointid": documents[i].get('g'),
+            "location": documents[i].get('l'),
+            "rate": rateList,
+          };
+          data.add(elementData);
         }
-      });
+      }
       var encodedData = jsonEncode(data);
       storeListPopular.assignAll(await storeModelFromJson(encodedData));
     } on Exception catch (e) {
@@ -262,11 +282,20 @@ class HomeScreenController extends GetxController {
 
   get_store_details_navigate_to_store_product_screen(
       {required String storeID, required String product_id}) async {
-    print(storeID);
-    print(product_id);
     var storeDetail =
         await FirebaseFirestore.instance.collection('store').doc(storeID).get();
     List<StoreModel> storeTempList = <StoreModel>[];
+    var query = await FirebaseFirestore.instance
+        .collection('store')
+        .doc(storeDetail.id)
+        .collection('rate')
+        .get();
+    List rateList = [];
+    for (var x = 0; x < query.docs.length; x++) {
+      Map rateListMap = query.docs[x].data();
+      rateListMap['id'] = query.docs[x].id;
+      rateList.add(rateListMap);
+    }
     storeTempList.assignAll(await storeModelFromJson(jsonEncode([
       {
         "image": storeDetail.get('image'),
@@ -275,6 +304,7 @@ class HomeScreenController extends GetxController {
         "id": storeDetail.id,
         "geopointid": storeDetail.get('g'),
         "location": storeDetail.get('l'),
+        "rate": rateList
       }
     ])));
     if (storeTempList.isNotEmpty || storeTempList.length > 0) {
@@ -300,4 +330,46 @@ class HomeScreenController extends GetxController {
       pageindex.value = pageindex.value - 1;
     }
   }
+
+  RxString getRate({required List<Rate> rates}) {
+    double rate_total = 0.0;
+    double final_rate = 0.0;
+    for (var i = 0; i < rates.length; i++) {
+      rate_total = rate_total + rates[i].rate;
+    }
+    final_rate = rate_total / rates.length;
+    return final_rate.toString().obs;
+  }
+
+  // setRate() async {
+  //   try {
+  //     var res = await FirebaseFirestore.instance.collection('store').get();
+  //     WriteBatch batch = FirebaseFirestore.instance.batch();
+  //     for (final store in res.docs) {
+  //       final DocumentReference storeDocRef = store.reference;
+  //       final CollectionReference rateCollection =
+  //           storeDocRef.collection('sample');
+  //       rateCollection.add({"rates": "", "userid": ""});
+  //       // final rateDocRef = rateCollection.doc();
+  //       // await rateDocRef.update({});
+  //       // batch.update(storeDocRef, {'rate': rateDocRef});
+  //     }
+  //     await batch.commit();
+  //   } on Exception catch (e) {
+  //     print(e);
+  //   }
+  // }
+
+  // setsubcollection() async {
+  //   var res = await FirebaseFirestore.instance.collection("store").add({
+  //     "address": "",
+  //     "image": "",
+  //     "name": "",
+  //     "password": "",
+  //     "popular": false,
+  //     "username": "",
+  //   });
+  //   final CollectionReference rateCollection = res.collection('rates');
+  //   rateCollection.add({"rate": 0.0, "userid": ""});
+  // }
 }

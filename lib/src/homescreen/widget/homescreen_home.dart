@@ -95,14 +95,49 @@ class HomeScreenHome extends GetView<HomeScreenController> {
                                 height: 1.h,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 2.w),
-                                child: Text(
-                                  controller.storeListPopular[index].name,
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                                padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      controller.storeListPopular[index].name,
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    controller.storeListPopular[index].rate
+                                                .length ==
+                                            0
+                                        ? SizedBox()
+                                        : Row(
+                                            children: [
+                                              Obx(
+                                                () => Text(
+                                                  controller
+                                                      .getRate(
+                                                          rates: controller
+                                                              .storeListPopular[
+                                                                  index]
+                                                              .rate)
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.star_rate_rounded,
+                                                color: Colors.yellow,
+                                                size: 11.sp,
+                                              )
+                                            ],
+                                          ),
+                                  ],
                                 ),
                               ),
                               Padding(
@@ -212,7 +247,7 @@ class HomeScreenHome extends GetView<HomeScreenController> {
                                 height: 1.h,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 2.w),
+                                padding: EdgeInsets.only(left: 2.w, right: 2.w),
                                 child: Text(
                                   controller
                                       .popularProductsList[index].productName,
@@ -325,13 +360,45 @@ class HomeScreenHome extends GetView<HomeScreenController> {
                                 height: 1.h,
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 2.w),
-                                child: Text(
-                                  controller.storeList[index].name,
-                                  style: TextStyle(
-                                      fontSize: 10.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
+                                padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      controller.storeList[index].name,
+                                      style: TextStyle(
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    controller.storeList[index].rate.length == 0
+                                        ? SizedBox()
+                                        : Row(
+                                            children: [
+                                              Obx(
+                                                () => Text(
+                                                  controller
+                                                      .getRate(
+                                                          rates: controller
+                                                              .storeList[index]
+                                                              .rate)
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.star_rate_rounded,
+                                                color: Colors.yellow,
+                                                size: 11.sp,
+                                              )
+                                            ],
+                                          ),
+                                  ],
                                 ),
                               ),
                               Padding(

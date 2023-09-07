@@ -11,7 +11,15 @@ import '../model/productscreen_model.dart';
 
 class ProductScreenController extends GetxController {
   StoreModel store = StoreModel(
-      address: "", image: "", name: "", id: "", geopointid: "", location: []);
+      rate: [],
+      address: "",
+      image: "",
+      name: "",
+      id: "",
+      geopointid: "",
+      location: []);
+  RxDouble final_rate = 0.0.obs;
+
   RxBool isLoading = true.obs;
   final CollectionReference productsReference =
       FirebaseFirestore.instance.collection('products');
@@ -25,6 +33,7 @@ class ProductScreenController extends GetxController {
     store = await Get.arguments['store'];
     product_id = await Get.arguments['product_id'];
     await getProducts();
+    getRate();
     isLoading(false);
     sync_products_to_cart();
     if (product_id != null) {
@@ -36,6 +45,15 @@ class ProductScreenController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  getRate() {
+    double rate_total = 0.0;
+    var rates = store.rate;
+    for (var i = 0; i < rates.length; i++) {
+      rate_total = rate_total + rates[i].rate;
+    }
+    final_rate.value = rate_total / rates.length;
   }
 
   jump_to_popular_products() async {
@@ -178,5 +196,33 @@ class ProductScreenController extends GetxController {
     if (Get.isRegistered<HomeScreenController>() == true) {
       Get.find<HomeScreenController>().getCartItemCount();
     }
+  }
+
+  addRating({required double rate}) async {
+    var isUserExist = await FirebaseFirestore.instance
+        .collection('store')
+        .doc(store.id)
+        .collection('rate')
+        .where('userid',
+            isEqualTo: Get.find<StorageServices>().storage.read('id'))
+        .get();
+    if (isUserExist.docs.length == 0) {
+      await FirebaseFirestore.instance
+          .collection('store')
+          .doc(store.id)
+          .collection('rate')
+          .add({
+        "rate": rate,
+        "userid": Get.find<StorageServices>().storage.read('id').toString()
+      });
+    } else {
+      await FirebaseFirestore.instance
+          .collection('store')
+          .doc(store.id)
+          .collection('rate')
+          .doc(isUserExist.docs[0].id)
+          .update({"rate": rate});
+    }
+    Get.back();
   }
 }

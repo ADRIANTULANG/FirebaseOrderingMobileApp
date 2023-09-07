@@ -5,6 +5,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:sizer/sizer.dart';
 import 'package:badges/badges.dart' as badges;
 import '../controller/productscreen_controller.dart';
+import '../widget/productscreen_alertdialog.dart';
 
 class ProductScreenView extends GetView<ProductScreenController> {
   const ProductScreenView({super.key});
@@ -117,13 +118,42 @@ class ProductScreenView extends GetView<ProductScreenController> {
                     SizedBox(
                       height: 1.h,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5.w, right: 5.w),
-                      child: Text(
-                        controller.store.name,
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(
+                      width: 100.w,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 5.w, right: 5.w),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              controller.store.name,
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                ProductScreenAlertDialog.showRating(
+                                    controller: controller);
+                              },
+                              child: Row(
+                                children: [
+                                  Obx(() => Text(
+                                        controller.final_rate.value.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13.sp),
+                                      )),
+                                  Icon(
+                                    Icons.star_purple500_outlined,
+                                    size: 20.sp,
+                                    color: Colors.yellow,
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),
