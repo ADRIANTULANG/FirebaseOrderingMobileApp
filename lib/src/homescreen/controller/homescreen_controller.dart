@@ -72,7 +72,7 @@ class HomeScreenController extends GetxController {
         .get();
     var radius = res.docs;
     for (var i = 0; i < radius.length; i++) {
-      setRadius.value = radius[i].get('radius');
+      setRadius.value = double.parse(radius[i].get('radius').toString());
     }
     print(setRadius.value);
   }
@@ -188,12 +188,12 @@ class HomeScreenController extends GetxController {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
       GeoFirestore geoFirestore = GeoFirestore(firestore.collection('store'));
-      final curreny_location_static_for_now = GeoPoint(
+      final current_location = GeoPoint(
           Get.find<LocationServices>().locationData!.latitude!,
           Get.find<LocationServices>().locationData!.longitude!);
 
-      List<DocumentSnapshot> documents = await geoFirestore.getAtLocation(
-          curreny_location_static_for_now, 0.6);
+      List<DocumentSnapshot> documents =
+          await geoFirestore.getAtLocation(current_location, setRadius.value);
       for (var i = 0; i < documents.length; i++) {
         if (documents[i].get("popular") == true) {
           var query = await FirebaseFirestore.instance

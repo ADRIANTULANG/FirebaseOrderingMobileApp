@@ -144,7 +144,11 @@ class LoginScreenController extends GetxController {
         print("null ang access token ug idtoken");
       }
     } catch (e) {
-      print("ERROR: $e");
+      print("ERROR: ${e}");
+      String error = e.toString();
+      if (error.contains('sign_in_canceled')) {
+        Get.back();
+      }
     }
   }
 }
