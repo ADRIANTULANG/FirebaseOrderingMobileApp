@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:orderingapp/src/comment_screen/view/comment_view.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:sizer/sizer.dart';
 import 'package:badges/badges.dart' as badges;
@@ -132,26 +133,44 @@ class ProductScreenView extends GetView<ProductScreenController> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                ProductScreenAlertDialog.showRating(
-                                    controller: controller);
-                              },
-                              child: Row(
-                                children: [
-                                  Obx(() => Text(
-                                        controller.final_rate.value.toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13.sp),
-                                      )),
-                                  Icon(
-                                    Icons.star_purple500_outlined,
-                                    size: 20.sp,
-                                    color: Colors.yellow,
-                                  )
-                                ],
-                              ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    ProductScreenAlertDialog.showRating(
+                                        controller: controller);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Obx(() => Text(
+                                            controller.final_rate.value
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13.sp),
+                                          )),
+                                      Icon(
+                                        Icons.star_purple500_outlined,
+                                        size: 20.sp,
+                                        color: Colors.yellow,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 2.w,
+                                ),
+                                InkWell(
+                                    onTap: () {
+                                      Get.to(() => CommentView(), arguments: {
+                                        "store": controller.store
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.comment_rounded,
+                                      color: Colors.amber[800],
+                                    )),
+                              ],
                             )
                           ],
                         ),
